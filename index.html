@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚗 Controle de Transporte - Portaria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header-actions .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-warning {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e66a0a;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1557b0;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: #1a73e8;
+        }
+
+        .info-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* CARDS RESUMO */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 18px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card .label {
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card .valor {
+            font-size: 26px;
+            font-weight: bold;
+            color: #1a73e8;
+            margin-top: 3px;
+        }
+
+        .card .valor.green {
+            color: #28a745;
+        }
+        .card .valor.orange {
+            color: #fd7e14;
+        }
+        .card .valor.purple {
+            color: #6f42c1;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e8f0fe;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* FORMULÁRIO */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group.half {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        label .required {
+            color: #dc3545;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        input.invalid {
+            border-color: #dc3545;
+        }
+
+        input.valid {
+            border-color: #28a745;
+        }
+
+        .btn-submit {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+            background: #1a73e8;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #1557b0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* AUTOCOMPLETE */
+        .sugestoes {
+            position: absolute;
+            background: white;
+            border: 2px solid #1a73e8;
+            border-radius: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+            width: 100%;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            top: 100%;
+            left: 0;
+            margin-top: 2px;
+        }
+
+        .sugestoes .item {
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+
+        .sugestoes .item:last-child {
+            border-bottom: none;
+        }
+
+        .sugestoes .item:hover {
+            background: #e8f0fe;
+        }
+
+        .sugestoes .item .codigo {
+            font-weight: bold;
+            color: #1a73e8;
+            font-size: 13px;
+        }
+
+        .sugestoes .item .nome {
+            color: #333;
+            margin-left: 8px;
+            font-size: 13px;
+        }
+
+        .sugestoes .item .grupo {
+            font-size: 11px;
+            color: #888;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .sugestoes .sem-resultado {
+            padding: 15px;
+            text-align: center;
+            color: #999;
+        }
+
+        /* TABELAS */
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-taxi {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-uber {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .badge-motivo {
+            background: #e8f0fe;
+            color: #1a73e8;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .badge-enviado {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-pendente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* FILTROS */
+        .filtros {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+
+        .filtros .form-group {
+            margin-bottom: 0;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filtros .form-group label {
+            font-size: 12px;
+        }
+
+        /* MENSAGENS */
+        .mensagem {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .mensagem.sucesso {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .mensagem.erro {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .mensagem.info {
+            display: block;
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        /* RATEIO */
+        .rateio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .rateio-card {
+            background: #f8f9fa;
+            padding: 18px 20px;
+            border-radius: 10px;
+            border-left: 4px solid #1a73e8;
+            transition: transform 0.2s;
+        }
+
+        .rateio-card:hover {
+            transform: scale(1.02);
+        }
+
+        .rateio-card .cc-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .rateio-card .cc-corridas {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a73e8;
+            margin: 5px 0;
+        }
+
+        .rateio-card .cc-percent {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .rateio-card .cc-valor {
+            font-size: 18px;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1a73e8, #0d47a1);
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .total-rateio {
+            background: #e8f0fe;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .total-rateio strong {
+            font-size: 20px;
+            color: #1a73e8;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        /* DASHBOARD */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .dashboard-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .dashboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .dashboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .dashboard-item .label-dash {
+            color: #555;
+        }
+
+        .dashboard-item .value-dash {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+
+        .cc-tag {
+            display: inline-block;
+            background: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            min-width: 80px;
+        }
+
+        .cc-tag .numero {
+            font-weight: bold;
+            font-size: 20px;
+            color: #1a73e8;
+        }
+
+        .cc-tag .nome-cc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .cc-tags-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .status-envio {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .status-envio .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot.green {
+            background: #28a745;
+        }
+        .dot.yellow {
+            background: #fd7e14;
+        }
+        .dot.red {
+            background: #dc3545;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .rateio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .tabs {
+                flex-wrap: nowrap;
+            }
+
+            .tab {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .form-group.half {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ============================================ -->
+        <!-- HEADER -->
+        <!-- ============================================ -->
+        <div class="header">
+            <h1>🚗 Controle de Transporte</h1>
+            <div class="header-actions">
+                <span class="info-badge">
+                    📅 <span id="mesAtual"></span>
+                </span>
+                <span class="info-badge">
+                    🚕 <span id="totalTaxi">0</span> | 🚙 <span id="totalUber">0</span>
+                </span>
+                <button class="btn btn-success" onclick="enviarResumoDiario()">
+                    📧 Enviar Resumo do Dia
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CARDS RESUMO -->
+        <!-- ============================================ -->
+        <div class="cards">
+            <div class="card">
+                <div class="label">Total de Corridas (Hoje)</div>
+                <div class="valor" id="totalCorridas">0</div>
+            </div>
+            <div class="card">
+                <div class="label">Centros de Custo</div>
+                <div class="valor green" id="totalCC">0</div>
+            </div>
+            <div class="card">
+                <div class="label">Média por Dia</div>
+                <div class="valor orange" id="mediaDia">0</div>
+            </div>
+            <div class="card">
+                <div class="label">CC Mais Usado</div>
+                <div class="valor purple" id="ccTop">-</div>
+            </div>
+            <div class="card">
+                <div class="label">Status Resumo</div>
+                <div class="valor" style="font-size: 16px;" id="statusResumo">
+                    <span class="status-envio">
+                        <span class="dot yellow"></span> Pendente
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TABS -->
+        <!-- ============================================ -->
+        <div class="tabs">
+            <button class="tab active" onclick="abrirTab('registro')">📝 Registrar</button>
+            <button class="tab" onclick="abrirTab('historico')">📋 Histórico</button>
+            <button class="tab" onclick="abrirTab('rateio')">💰 Rateio</button>
+            <button class="tab" onclick="abrirTab('dashboard')">📊 Dashboard</button>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TAB 1: REGISTRO -->
+        <!-- ============================================ -->
+        <div class="tab-content active" id="tab-registro">
+            <h2 style="margin-bottom: 20px;">📝 Registrar Utilização</h2>
+
+            <form id="formRegistro">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>📅 Data/Hora <span class="required">*</span></label>
+                        <input type="datetime-local" id="dataCorrida" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🚗 Tipo <span class="required">*</span></label>
+                        <select id="tipoTransporte" required>
+                            <option value="TAXI">🚕 Táxi</option>
+                            <option value="UBER">🚙 Uber</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>👤 Solicitante <span class="required">*</span></label>
+                        <input type="text" id="solicitante" placeholder="Nome do funcionário" required>
+                    </div>
+
+                    <div class="form-group half">
+                        <label>🏢 Centro de Custo <span class="required">*</span></label>
+                        <input type="text" id="buscaCC" placeholder="Digite o código ou nome do CC..." autocomplete="off">
+                        <input type="hidden" id="centroCusto" required>
+                        <div id="sugestoesCC" class="sugestoes"></div>
+                        <small style="color: #888; font-size: 12px;">
+                            Digite parte do código ou nome. Ex: "Suprimentos" ou "2.07001.03.008"
+                        </small>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- CAMPO MOTIVO DA SOLICITAÇÃO -->
+                    <!-- ========================================== -->
+                    <div class="form-group full">
+                        <label>📌 Motivo da Solicitação <span class="required">*</span></label>
+                        <select id="motivo" required>
+                            <option value="">Selecione o motivo...</option>
+                            <option value="HORA_EXTRA">⏰ Hora Extra</option>
+                            <option value="SAIDA_FRETADO">🚌 Saída Após Fretado</option>
+                            <option value="ATRASO">⏳ Atraso</option>
+                            <option value="REUNIAO">🤝 Reunião</option>
+                            <option value="TREINAMENTO">📚 Treinamento</option>
+                            <option value="OUTROS">📝 Outros</option>
+                        </select>
+                    </div>
+
+                    <!-- Campo "Outros" (aparece apenas quando selecionado) -->
+                    <div class="form-group full" id="grupoOutroMotivo" style="display: none;">
+                        <label>📝 Especificar Outro Motivo <span class="required">*</span></label>
+                        <input type="text" id="outroMotivo" placeholder="Digite o motivo...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>📍 Destino</label>
+                        <input type="text" id="destino" placeholder="Ex: Aeroporto, Centro">
+                    </div>
+
+                    <div class="form-group">
+                        <label>👨‍✈️ Motorista</label>
+                        <input type="text" id="motorista" placeholder="Nome do motorista">
+                    </div>
+
+                    <div class="form-group full">
+                        <label>📝 Observações</label>
+                        <textarea id="observacoes" rows="2" placeholder="Informações adicionais..."></textarea>
+                    </div>
+
+                    <div class="form-group full" style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button type="submit" class="btn-submit" style="flex: 1;" id="btnRegistrar">
+                            💾 Registrar Corrida
+                        </button>
+                        <button type="reset" class="btn btn-outline" style="border: 2px solid #ddd; color: #666;" onclick="limparFormulario()">
+                            Limpar
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="mensagem" id="msgRegistro"></div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TAB 2: HISTÓRICO -->
+        <!-- ============================================ -->
+        <div class="tab-content" id="tab-historico">
+            <h2 style="margin-bottom: 10px;">📋 Histórico de Utilização</h2>
+
+            <div class="filtros">
+                <div class="form-group">
+                    <label>Filtrar por CC</label>
+                    <select id="filtroCC">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="filtroData">
+                </div>
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="filtroTipo">
+                        <option value="">Todos</option>
+                        <option value="TAXI">Táxi</option>
+                        <option value="UBER">Uber</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Motivo</label>
+                    <select id="filtroMotivo">
+                        <option value="">Todos</option>
+                        <option value="HORA_EXTRA">Hora Extra</option>
+                        <option value="SAIDA_FRETADO">Saída Após Fretado</option>
+                        <option value="ATRASO">Atraso</option>
+                        <option value="REUNIAO">Reunião</option>
+                        <option value="TREINAMENTO">Treinamento</option>
+                        <option value="OUTROS">Outros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="carregarHistorico()" style="padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #1a73e8; color: white;">
+                        🔍 Filtrar
+                    </button>
+                    <button class="btn btn-outline" onclick="limparFiltrosHistorico()" style="padding: 10px 20px; border: 2px solid #ddd; border-radius: 8px; background: transparent; cursor: pointer; color: #666;">
+                        Limpar
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Data/Hora</th>
+                            <th>Tipo</th>
+                            <th>CC</th>
+                            <th>Solicitante</th>
+                            <th>Motivo</th>
+                            <th>Destino</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaHistorico">
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <div class="icon">📭</div>
+                                Nenhuma corrida registrada.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TAB 3: RATEIO -->
+        <!-- ============================================ -->
+        <div class="tab-content" id="tab-rateio">
+            <h2 style="margin-bottom: 10px;">💰 Rateio Mensal por Centro de Custo</h2>
+
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <label style="font-weight: 600;">Mês de Referência:</label>
+                    <strong id="mesRateio" style="font-size: 18px; color: #1a73e8;"></strong>
+                </div>
+                <div>
+                    <label style="font-weight: 600;">Valor Total da Fatura (R$):</label>
+                    <input type="number" id="valorFatura" step="0.01" placeholder="0,00" style="width: 150px; display: inline-block; padding: 8px 12px; border: 2px solid #ddd; border-radius: 8px;">
+                    <button class="btn btn-success" onclick="calcularRateio()" style="padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #28a745; color: white; margin-left: 5px;">
+                        📊 Calcular
+                    </button>
+                </div>
+            </div>
+
+            <div id="rateioContainer">
+                <div class="rateio-grid" id="rateioGrid">
+                    <div class="total-rateio" style="grid-column: 1 / -1;">
+                        <div class="icon" style="font-size: 48px;">📊</div>
+                        <p>Nenhuma corrida registrada neste mês.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="exportarRateio()" style="padding: 10px 25px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #1a73e8; color: white;">
+                    📥 Exportar CSV
+                </button>
+                <button class="btn btn-warning" onclick="enviarRateioEmail()" style="padding: 10px 25px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #fd7e14; color: white;">
+                    📧 Enviar por Email
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TAB 4: DASHBOARD -->
+        <!-- ============================================ -->
+        <div class="tab-content" id="tab-dashboard">
+            <h2 style="margin-bottom: 20px;">📊 Dashboard de Utilização</h2>
+            <div id="dashboardContainer">
+                <!-- Preenchido dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SCRIPT PRINCIPAL -->
+    <!-- ============================================ -->
+    <script>
+        // ============================================================
+        // 🔧 CONFIGURAÇÃO - URL DO BACKEND (Google Apps Script)
+        // ============================================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgxcLhlD2WZ3_kBkwko5v-G_S2y_P93LiwJI_KpIwWtrN7MfkGe7YZBXrsLTwn3yHB/exec';
+
+        // ============================================================
+        // 1. CENTROS DE CUSTO - COMPLETO
+        // ============================================================
+        const CENTROS_CUSTO = {
+            // FILIAL 7 - PRODUÇÃO
+            '1.07001.01.002': { nome: 'Usinagem Mecanica Pesada', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.01.004': { nome: 'Ferramentaria', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.02.001': { nome: 'Preparacao', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.03.001': { nome: 'Pré-Montagem', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.03.003': { nome: 'Acabamento/Pintura', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.03.004': { nome: 'Montagem Mecânica', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.03.005': { nome: 'Solda Robotizada', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.03.006': { nome: 'Solda Convencional', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.03.007': { nome: 'Forno de Tratamento Termico', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.03.008': { nome: 'Linha Automatizada', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+            '1.07001.07.001': { nome: 'Controle de Qualidade', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
+
+            // FILIAL 7 - ADMINISTRATIVO/SUPORTE
+            '1.07002.03.001': { nome: 'Almoxarifado', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.04.001': { nome: 'Manutenção e Expansão', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.05.001': { nome: 'Planejamento PCP', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.06.001': { nome: 'Engenharia Industrial Mecânica', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.06.002': { nome: 'Engenharia Industrial de Caldeiraria', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.07.001': { nome: 'Gerencia da Producao', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.07.002': { nome: 'Delp Açu', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.07.003': { nome: 'Apoio Usinagem e Montagem Mecânica', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.07.004': { nome: 'Apoio Caldeiraria', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.08.001': { nome: 'Engenharia de Materiais e Solda', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.08.002': { nome: 'Centro Tecnologico de Soldagem - CTS', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.09.001': { nome: 'Menor aprendiz', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.10.001': { nome: 'Controle de Qualidade Documental', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.11.002': { nome: 'Montagem Externa Geral', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.11.008': { nome: 'Instalação Coifa 2 Gerdau', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.11.027': { nome: 'Inatalação Vigas', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.12.001': { nome: 'Serviço Espec. Eng. Seg. Medicina Trabalho - SESMT', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.12.002': { nome: 'Sistema Garantia Qualidade', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.13.001': { nome: 'Excelência Operacional', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+            '1.07002.14.001': { nome: 'Logística', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
+
+            // COMERCIAL
+            '2.07001.01.002': { nome: 'Comercial Indústria', grupo: '💼 COMERCIAL' },
+            '2.07001.01.004': { nome: 'Marketing', grupo: '💼 COMERCIAL' },
+            '2.07001.01.005': { nome: 'Comercial Subsea', grupo: '💼 COMERCIAL' },
+            '2.07001.01.007': { nome: 'Field Service', grupo: '💼 COMERCIAL' },
+            '2.07001.01.009': { nome: 'Comercial Mooring', grupo: '💼 COMERCIAL' },
+            '2.07001.01.010': { nome: 'Engenharia de Aplicação e Vendas', grupo: '💼 COMERCIAL' },
+
+            // ADMINISTRATIVO GERAL
+            '2.07001.02.001': { nome: 'Gente & Gestão', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.03.001': { nome: 'Financeiro', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.03.002': { nome: 'Gerencia de Projetos', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.03.004': { nome: 'Tecnologia da Informação', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.03.005': { nome: 'Diretoria e assessoria', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.03.008': { nome: 'Suprimentos', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.03.010': { nome: 'Pesquisa e Desenvolvimento – P&D', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.03.011': { nome: 'Facilities', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.03.012': { nome: 'Núcleo de Inovação', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.04.001': { nome: 'Administracao Geral', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.05.001': { nome: 'Conselho de administracao', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.06.001': { nome: 'Projeto Estrutura Organizacional', grupo: '📊 ADMINISTRATIVO GERAL' },
+            '2.07001.06.002': { nome: 'Delp USA', grupo: '📊 ADMINISTRATIVO GERAL' }
+        };
+
+        // Mapeamento de motivos para exibição
+        const MOTIVOS = {
+            'HORA_EXTRA': '⏰ Hora Extra',
+            'SAIDA_FRETADO': '🚌 Saída Após Fretado',
+            'ATRASO': '⏳ Atraso',
+            'REUNIAO': '🤝 Reunião',
+            'TREINAMENTO': '📚 Treinamento',
+            'OUTROS': '📝 Outros'
+        };
+
+        // ============================================================
+        // 2. DADOS MOCK (Simula banco de dados - serão substituídos pelos dados reais)
+        // ============================================================
+        let dadosMock = [
+            { id: 1, data: '2026-06-15T08:00', tipo: 'TAXI', cc: '1.07001.01.002', solicitante: 'João Silva', motivo: 'HORA_EXTRA',
+                destino: 'Centro', motorista: 'Carlos' },
+            { id: 2, data: '2026-06-15T09:30', tipo: 'UBER', cc: '2.07001.03.008', solicitante: 'Maria Santos',
+                motivo: 'REUNIAO', destino: 'Aeroporto', motorista: 'Ana' },
+            { id: 3, data: '2026-06-15T10:15', tipo: 'TAXI', cc: '1.07002.07.001', solicitante: 'Pedro Costa',
+                motivo: 'SAIDA_FRETADO', destino: 'Zona Sul', motorista: 'Roberto' },
+            { id: 4, data: '2026-06-15T11:30', tipo: 'UBER', cc: '2.07001.03.004', solicitante: 'Lucas Oliveira',
+                motivo: 'TREINAMENTO', destino: 'Escritório', motorista: 'Fernanda' },
+            { id: 5, data: '2026-06-15T13:00', tipo: 'TAXI', cc: '2.07001.01.002', solicitante: 'João Silva', motivo: 'ATRASO',
+                destino: 'Shopping', motorista: 'Carlos' },
+            { id: 6, data: '2026-06-15T14:30', tipo: 'UBER', cc: '2.07001.03.001', solicitante: 'Ana Pereira',
+                motivo: 'OUTROS', destino: 'Banco', motorista: 'Marcos' },
+            { id: 7, data: '2026-06-15T16:00', tipo: 'TAXI', cc: '1.07002.03.001', solicitante: 'Carla Lima',
+                motivo: 'HORA_EXTRA', destino: 'Evento', motorista: 'Roberto' },
+            { id: 8, data: '2026-06-15T17:45', tipo: 'TAXI', cc: '2.07001.03.011', solicitante: 'Paulo Mendes',
+                motivo: 'REUNIAO', destino: 'Fornecedor', motorista: 'Carlos' },
+        ];
+
+        let ultimoId = dadosMock.length;
+        let statusEnvio = 'pendente';
+
+        // ============================================================
+        // 3. INICIALIZAÇÃO
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const mes = now.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+            document.getElementById('mesAtual').textContent = mes.charAt(0).toUpperCase() + mes.slice(1);
+            document.getElementById('mesRateio').textContent = mes.charAt(0).toUpperCase() + mes.slice(1);
+
+            const dataPadrao = now.toISOString().slice(0, 16);
+            document.getElementById('dataCorrida').value = dataPadrao;
+
+            document.getElementById('filtroData').value = now.toISOString().slice(0, 10);
+
+            preencherFiltroCC();
+            configurarAutocomplete();
+            configurarMotivo();
+            atualizarResumo();
+            carregarHistorico();
+            calcularRateio();
+            carregarDashboard();
+
+            // Mostra no console que a URL está configurada
+            console.log('✅ Sistema conectado ao Google Apps Script:');
+            console.log('🔗 URL:', SCRIPT_URL);
+        });
+
+        // ============================================================
+        // 4. PREENCHER FILTRO DE CC
+        // ============================================================
+        function preencherFiltroCC() {
+            const select = document.getElementById('filtroCC');
+            const sorted = Object.keys(CENTROS_CUSTO).sort();
+            sorted.forEach(codigo => {
+                const option = document.createElement('option');
+                option.value = codigo;
+                option.textContent = `${codigo} - ${CENTROS_CUSTO[codigo].nome}`;
+                select.appendChild(option);
+            });
+        }
+
+        // ============================================================
+        // 5. AUTOCOMPLETE
+        // ============================================================
+        function configurarAutocomplete() {
+            const buscaInput = document.getElementById('buscaCC');
+            const hiddenInput = document.getElementById('centroCusto');
+            const sugestoesDiv = document.getElementById('sugestoesCC');
+
+            buscaInput.addEventListener('input', function() {
+                const termo = this.value.toLowerCase().trim();
+
+                if (!termo) {
+                    sugestoesDiv.style.display = 'none';
+                    hiddenInput.value = '';
+                    this.classList.remove('valid', 'invalid');
+                    return;
+                }
+
+                const resultados = Object.entries(CENTROS_CUSTO)
+                    .filter(([codigo, dados]) => {
+                        const matchCodigo = codigo.includes(termo);
+                        const matchNome = dados.nome.toLowerCase().includes(termo);
+                        return matchCodigo || matchNome;
+                    })
+                    .slice(0, 15);
+
+                if (resultados.length === 0) {
+                    sugestoesDiv.innerHTML = '<div class="sem-resultado">Nenhum CC encontrado</div>';
+                    sugestoesDiv.style.display = 'block';
+                    hiddenInput.value = '';
+                    this.classList.remove('valid');
+                    this.classList.add('invalid');
+                    return;
+                }
+
+                sugestoesDiv.innerHTML = resultados.map(([codigo, dados]) => `
+                        <div class="item" onclick="selecionarCC('${codigo}', '${dados.nome}')">
+                            <span class="codigo">${codigo}</span>
+                            <span class="nome">${dados.nome}</span>
+                            <span class="grupo">${dados.grupo}</span>
+                        </div>
+                    `).join('');
+
+                sugestoesDiv.style.display = 'block';
+            });
+
+            buscaInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    if (!sugestoesDiv.matches(':hover')) {
+                        sugestoesDiv.style.display = 'none';
+                    }
+                }, 200);
+            });
+
+            buscaInput.addEventListener('focus', function() {
+                if (this.value && this.value.length > 0) {
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+
+            buscaInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const primeiroItem = sugestoesDiv.querySelector('.item');
+                    if (primeiroItem) {
+                        primeiroItem.click();
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            window.selecionarCC = function(codigo, nome) {
+                buscaInput.value = `${codigo} - ${nome}`;
+                hiddenInput.value = codigo;
+                sugestoesDiv.style.display = 'none';
+                buscaInput.classList.remove('invalid');
+                buscaInput.classList.add('valid');
+            };
+        }
+
+        // ============================================================
+        // 6. CONFIGURAR CAMPO MOTIVO
+        // ============================================================
+        function configurarMotivo() {
+            const selectMotivo = document.getElementById('motivo');
+            const grupoOutro = document.getElementById('grupoOutroMotivo');
+            const inputOutro = document.getElementById('outroMotivo');
+
+            selectMotivo.addEventListener('change', function() {
+                if (this.value === 'OUTROS') {
+                    grupoOutro.style.display = 'block';
+                    inputOutro.required = true;
+                    inputOutro.focus();
+                } else {
+                    grupoOutro.style.display = 'none';
+                    inputOutro.required = false;
+                    inputOutro.value = '';
+                }
+            });
+        }
+
+        // ============================================================
+        // 7. FUNÇÕES DE TABS
+        // ============================================================
+        function abrirTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            document.querySelectorAll('.tab').forEach(t => {
+                const mapa = {
+                    'registro': 'Registrar',
+                    'historico': 'Histórico',
+                    'rateio': 'Rateio',
+                    'dashboard': 'Dashboard'
+                };
+                if (t.textContent.includes(mapa[tabId])) {
+                    t.classList.add('active');
+                }
+            });
+
+            if (tabId === 'rateio') calcularRateio();
+            if (tabId === 'dashboard') carregarDashboard();
+        }
+
+        // ============================================================
+        // 8. REGISTRAR CORRIDA (COM INTEGRAÇÃO REAL)
+        // ============================================================
+        document.getElementById('formRegistro').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const ccCodigo = document.getElementById('centroCusto').value;
+            const ccNome = document.getElementById('buscaCC').value;
+
+            if (!ccCodigo) {
+                mostrarMensagem('msgRegistro', '❌ Selecione um Centro de Custo válido!', 'erro');
+                document.getElementById('buscaCC').focus();
+                document.getElementById('buscaCC').classList.add('invalid');
+                return;
+            }
+
+            const motivo = document.getElementById('motivo').value;
+            if (!motivo) {
+                mostrarMensagem('msgRegistro', '❌ Selecione o motivo da solicitação!', 'erro');
+                document.getElementById('motivo').focus();
+                return;
+            }
+
+            let motivoFinal = motivo;
+            if (motivo === 'OUTROS') {
+                const outroTexto = document.getElementById('outroMotivo').value.trim();
+                if (!outroTexto) {
+                    mostrarMensagem('msgRegistro', '❌ Digite o motivo "Outros"!', 'erro');
+                    document.getElementById('outroMotivo').focus();
+                    return;
+                }
+                motivoFinal = 'OUTROS: ' + outroTexto;
+            }
+
+            const dados = {
+                acao: 'registrar',
+                data: document.getElementById('dataCorrida').value,
+                tipo: document.getElementById('tipoTransporte').value,
+                centroCusto: ccCodigo,
+                ccNome: CENTROS_CUSTO[ccCodigo]?.nome || ccCodigo,
+                solicitante: document.getElementById('solicitante').value.trim(),
+                motivo: motivoFinal,
+                destino: document.getElementById('destino').value.trim(),
+                motorista: document.getElementById('motorista').value.trim(),
+                observacoes: document.getElementById('observacoes').value.trim()
+            };
+
+            if (!dados.solicitante) {
+                mostrarMensagem('msgRegistro', '❌ Digite o nome do solicitante!', 'erro');
+                document.getElementById('solicitante').focus();
+                return;
+            }
+
+            const btn = document.getElementById('btnRegistrar');
+            btn.disabled = true;
+            btn.textContent = '⏳ Registrando...';
+
+            // ============================================================
+            // 🔥 ENVIO PARA O GOOGLE APPS SCRIPT (BACKEND REAL)
+            // ============================================================
+            fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(dados)
+                })
+                .then(() => {
+                    // Como é no-cors, não temos resposta, mas o script executou
+                    mostrarMensagem('msgRegistro',
+                        `✅ Corrida registrada com sucesso!<br><strong>CC:</strong> ${ccCodigo} - ${dados.ccNome}<br><strong>Motivo:</strong> ${dados.motivo}`,
+                        'sucesso'
+                    );
+
+                    // Limpar formulário
+                    document.getElementById('formRegistro').reset();
+                    document.getElementById('centroCusto').value = '';
+                    document.getElementById('buscaCC').value = '';
+                    document.getElementById('buscaCC').classList.remove('valid', 'invalid');
+                    document.getElementById('grupoOutroMotivo').style.display = 'none';
+                    document.getElementById('outroMotivo').required = false;
+
+                    const now = new Date().toISOString().slice(0, 16);
+                    document.getElementById('dataCorrida').value = now;
+
+                    statusEnvio = 'pendente';
+                    atualizarStatusResumo();
+                    atualizarResumo();
+                    carregarHistorico();
+                    calcularRateio();
+                    carregarDashboard();
+
+                    btn.disabled = false;
+                    btn.textContent = '💾 Registrar Corrida';
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    mostrarMensagem('msgRegistro', '❌ Erro ao registrar. Tente novamente.', 'erro');
+                    btn.disabled = false;
+                    btn.textContent = '💾 Registrar Corrida';
+                });
+        });
+
+        function limparFormulario() {
+            document.getElementById('formRegistro').reset();
+            document.getElementById('centroCusto').value = '';
+            document.getElementById('buscaCC').value = '';
+            document.getElementById('buscaCC').classList.remove('valid', 'invalid');
+            document.getElementById('grupoOutroMotivo').style.display = 'none';
+            document.getElementById('outroMotivo').required = false;
+            const now = new Date().toISOString().slice(0, 16);
+            document.getElementById('dataCorrida').value = now;
+            document.getElementById('msgRegistro').style.display = 'none';
+        }
+
+        // ============================================================
+        // 9. ATUALIZAR RESUMO
+        // ============================================================
+        function atualizarResumo() {
+            const hoje = new Date().toISOString().slice(0, 10);
+            const corridasHoje = dadosMock.filter(d => d.data.startsWith(hoje));
+
+            const total = corridasHoje.length;
+            const taxis = corridasHoje.filter(d => d.tipo === 'TAXI').length;
+            const ubers = corridasHoje.filter(d => d.tipo === 'UBER').length;
+
+            const ccs = [...new Set(corridasHoje.map(d => d.cc))];
+
+            let ccCount = {};
+            corridasHoje.forEach(d => {
+                ccCount[d.cc] = (ccCount[d.cc] || 0) + 1;
+            });
+            let topCC = '-';
+            let maxCount = 0;
+            for (let cc in ccCount) {
+                if (ccCount[cc] > maxCount) {
+                    maxCount = ccCount[cc];
+                    topCC = cc + ' - ' + (CENTROS_CUSTO[cc]?.nome || cc);
+                }
+            }
+
+            const dias = new Date().getDate();
+            const media = total > 0 ? (total / dias).toFixed(1) : 0;
+
+            document.getElementById('totalCorridas').textContent = total;
+            document.getElementById('totalTaxi').textContent = taxis;
+            document.getElementById('totalUber').textContent = ubers;
+            document.getElementById('totalCC').textContent = ccs.length || 0;
+            document.getElementById('mediaDia').textContent = media;
+            document.getElementById('ccTop').textContent = topCC;
+
+            atualizarStatusResumo();
+        }
+
+        function atualizarStatusResumo() {
+            const el = document.getElementById('statusResumo');
+            if (statusEnvio === 'enviado') {
+                el.innerHTML = `<span class="status-envio"><span class="dot green"></span> Enviado hoje</span>`;
+            } else {
+                el.innerHTML = `<span class="status-envio"><span class="dot yellow"></span> Pendente</span>`;
+            }
+        }
+
+        // ============================================================
+        // 10. CARREGAR HISTÓRICO
+        // ============================================================
+        function carregarHistorico() {
+            const filtroCC = document.getElementById('filtroCC').value;
+            const filtroData = document.getElementById('filtroData').value;
+            const filtroTipo = document.getElementById('filtroTipo').value;
+            const filtroMotivo = document.getElementById('filtroMotivo').value;
+
+            let dadosFiltrados = [...dadosMock];
+
+            if (filtroCC) {
+                dadosFiltrados = dadosFiltrados.filter(d => d.cc === filtroCC);
+            }
+            if (filtroData) {
+                dadosFiltrados = dadosFiltrados.filter(d => d.data.startsWith(filtroData));
+            }
+            if (filtroTipo) {
+                dadosFiltrados = dadosFiltrados.filter(d => d.tipo === filtroTipo);
+            }
+            if (filtroMotivo) {
+                dadosFiltrados = dadosFiltrados.filter(d => d.motivo && d.motivo.startsWith(filtroMotivo));
+            }
+
+            const tbody = document.getElementById('tabelaHistorico');
+
+            if (dadosFiltrados.length === 0) {
+                tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <div class="icon">📭</div>
+                                Nenhuma corrida encontrada.
+                            </td>
+                        </tr>
+                    `;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            dadosFiltrados.sort((a, b) => b.id - a.id).forEach(item => {
+                const dataFormatada = new Date(item.data).toLocaleString('pt-BR');
+                const nomeCC = CENTROS_CUSTO[item.cc]?.nome || item.cc;
+                const motivoExibicao = item.motivo || '-';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${dataFormatada}</td>
+                        <td><span class="badge ${item.tipo === 'TAXI' ? 'badge-taxi' : 'badge-uber'}">${item.tipo}</span></td>
+                        <td><strong>${item.cc}</strong><br><small style="color:#666;">${nomeCC}</small></td>
+                        <td>${item.solicitante}</td>
+                        <td><span class="badge-motivo">${motivoExibicao}</span></td>
+                        <td>${item.destino}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="excluirCorrida(${item.id})">
+                                🗑️
+                            </button>
+                        </td>
+                    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function limparFiltrosHistorico() {
+            document.getElementById('filtroCC').value = '';
+            document.getElementById('filtroTipo').value = '';
+            document.getElementById('filtroMotivo').value = '';
+            document.getElementById('filtroData').value = new Date().toISOString().slice(0, 10);
+            carregarHistorico();
+        }
+
+        function excluirCorrida(id) {
+            if (confirm('Tem certeza que deseja excluir esta corrida?')) {
+                dadosMock = dadosMock.filter(d => d.id !== id);
+                statusEnvio = 'pendente';
+                atualizarStatusResumo();
+                atualizarResumo();
+                carregarHistorico();
+                calcularRateio();
+                carregarDashboard();
+                mostrarMensagem('msgRegistro', '🗑️ Corrida excluída com sucesso!', 'sucesso');
+            }
+        }
+
+        // ============================================================
+        // 11. CALCULAR RATEIO
+        // ============================================================
+        function calcularRateio() {
+            const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
+            const mesAtual = new Date().toISOString().slice(0, 7);
+            const corridasMes = dadosMock.filter(d => d.data.startsWith(mesAtual));
+
+            const grid = document.getElementById('rateioGrid');
+
+            if (corridasMes.length === 0) {
+                grid.innerHTML = `
+                        <div class="total-rateio" style="grid-column: 1 / -1;">
+                            <div class="icon" style="font-size: 48px;">📊</div>
+                            <p>Nenhuma corrida registrada neste mês.</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            let ccCount = {};
+            corridasMes.forEach(d => {
+                ccCount[d.cc] = (ccCount[d.cc] || 0) + 1;
+            });
+
+            const totalCorridas = corridasMes.length;
+            const ccs = Object.keys(ccCount).sort();
+
+            grid.innerHTML = '';
+            let totalRateado = 0;
+
+            ccs.forEach(cc => {
+                const quantidade = ccCount[cc];
+                const percentual = (quantidade / totalCorridas) * 100;
+                const valorRateado = (percentual / 100) * valorFatura;
+                totalRateado += valorRateado;
+                const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
+
+                const div = document.createElement('div');
+                div.className = 'rateio-card';
+                div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="cc-name">🏢 ${cc}</span>
+                            <span class="cc-percent">${percentual.toFixed(1)}%</span>
+                        </div>
+                        <div style="font-size: 12px; color: #666;">${nomeCC}</div>
+                        <div class="cc-corridas">${quantidade}</div>
+                        <div style="font-size: 13px; color: #666;">corridas</div>
+                        <div class="cc-valor">R$ ${valorRateado.toFixed(2)}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentual}%;"></div>
+                        </div>
+                    `;
+                grid.appendChild(div);
+            });
+
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'total-rateio';
+            totalDiv.innerHTML = `
+                    <strong>Total Rateado: R$ ${totalRateado.toFixed(2)}</strong>
+                    <br>
+                    <small>${totalCorridas} corridas • ${ccs.length} Centros de Custo</small>
+                    <br>
+                    <small style="color: #666;">
+                        💰 Valor da fatura: R$ ${valorFatura.toFixed(2)} | 
+                        Diferença: R$ ${(valorFatura - totalRateado).toFixed(2)}
+                    </small>
+                `;
+            grid.appendChild(totalDiv);
+        }
+
+        // ============================================================
+        // 12. DASHBOARD
+        // ============================================================
+        function carregarDashboard() {
+            const mesAtual = new Date().toISOString().slice(0, 7);
+            const corridasMes = dadosMock.filter(d => d.data.startsWith(mesAtual));
+            const container = document.getElementById('dashboardContainer');
+
+            if (corridasMes.length === 0) {
+                container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📊</div>
+                            <p>Nenhum dado disponível para análise.</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            let ccCount = {};
+            let tipoCount = { TAXI: 0, UBER: 0 };
+            let motivoCount = {};
+            corridasMes.forEach(d => {
+                ccCount[d.cc] = (ccCount[d.cc] || 0) + 1;
+                tipoCount[d.tipo] = (tipoCount[d.tipo] || 0) + 1;
+                const motivoKey = d.motivo ? d.motivo.split(':')[0].trim() : 'OUTROS';
+                motivoCount[motivoKey] = (motivoCount[motivoKey] || 0) + 1;
+            });
+
+            const total = corridasMes.length;
+            const topCCs = Object.entries(ccCount)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            const topMotivos = Object.entries(motivoCount)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+
+            let html = `
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <h3>📈 Distribuição por Tipo</h3>
+                            <div class="dashboard-item">
+                                <span class="label-dash">🚕 Táxi</span>
+                                <span class="value-dash">${tipoCount.TAXI} (${((tipoCount.TAXI/total)*100).toFixed(1)}%)</span>
+                            </div>
+                            <div class="dashboard-item">
+                                <span class="label-dash">🚙 Uber</span>
+                                <span class="value-dash">${tipoCount.UBER} (${((tipoCount.UBER/total)*100).toFixed(1)}%)</span>
+                            </div>
+                            <div class="dashboard-item" style="border-bottom: none; margin-top: 10px; font-weight: bold;">
+                                <span class="label-dash">Total</span>
+                                <span class="value-dash" style="color: #333;">${total} corridas</span>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-card">
+                            <h3>🏆 Top 5 CCs</h3>
+                            ${topCCs.map(([cc, count], index) => {
+                                const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
+                                const emojis = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+                                return `
+                                    <div class="dashboard-item">
+                                        <span class="label-dash">${emojis[index] || '•'} ${cc}</span>
+                                        <span class="value-dash">${count} (${((count/total)*100).toFixed(1)}%)</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+
+            // Motivos mais comuns
+            html += `
+                    <div class="dashboard-card" style="margin-top: 20px;">
+                        <h3>📌 Motivos mais comuns</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                            ${topMotivos.map(([motivo, count]) => `
+                                <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+                                    <div style="font-weight: bold; font-size: 20px; color: #1a73e8;">${count}</div>
+                                    <div style="font-size: 12px; color: #666;">${MOTIVOS[motivo] || motivo}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+            // Todos os CCs
+            const ccs = Object.keys(ccCount).sort();
+            html += `
+                    <div class="dashboard-card" style="margin-top: 20px;">
+                        <h3>📊 Todos os Centros de Custo</h3>
+                        <div class="cc-tags-grid">
+                            ${ccs.map(cc => `
+                                <div class="cc-tag">
+                                    <div class="numero">${ccCount[cc]}</div>
+                                    <div class="nome-cc">${cc}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // 13. ENVIAR RESUMO DIÁRIO PARA FACILITIES
+        // ============================================================
+        function enviarResumoDiario() {
+            const hoje = new Date().toISOString().slice(0, 10);
+            const corridasHoje = dadosMock.filter(d => d.data.startsWith(hoje));
+
+            if (corridasHoje.length === 0) {
+                mostrarMensagem('msgRegistro', '📭 Nenhuma corrida registrada hoje para enviar.', 'info');
+                return;
+            }
+
+            const btn = document.querySelector('.btn-success');
+            btn.disabled = true;
+            btn.textContent = '⏳ Enviando...';
+
+            // ============================================================
+            // 🔥 ENVIO DO RESUMO PARA O BACKEND
+            // ============================================================
+            const dados = {
+                acao: 'resumo'
+            };
+
+            fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(dados)
+                })
+                .then(() => {
+                    statusEnvio = 'enviado';
+                    atualizarStatusResumo();
+
+                    btn.disabled = false;
+                    btn.textContent = '📧 Enviar Resumo do Dia';
+
+                    mostrarMensagem('msgRegistro',
+                        '✅ Resumo do dia enviado para Facilities!<br><small>Destinatário: facilities@empresa.com</small>',
+                        'sucesso'
+                    );
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar resumo. Tente novamente.', 'erro');
+                    btn.disabled = false;
+                    btn.textContent = '📧 Enviar Resumo do Dia';
+                });
+        }
+
+        // ============================================================
+        // 14. EXPORTAR RATEIO
+        // ============================================================
+        function exportarRateio() {
+            const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
+            const mesAtual = new Date().toISOString().slice(0, 7);
+            const corridasMes = dadosMock.filter(d => d.data.startsWith(mesAtual));
+
+            if (corridasMes.length === 0) {
+                alert('Nenhuma corrida registrada neste mês.');
+                return;
+            }
+
+            let ccCount = {};
+            corridasMes.forEach(d => {
+                ccCount[d.cc] = (ccCount[d.cc] || 0) + 1;
+            });
+
+            const total = corridasMes.length;
+            let csv =
+            'Centro de Custo,Nome,Corridas,Percentual,Valor Rateado,Motivos\n';
+
+            Object.entries(ccCount).forEach(([cc, count]) => {
+                const percent = (count / total) * 100;
+                const valor = (percent / 100) * valorFatura;
+                const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
+                const motivos = corridasMes.filter(d => d.cc === cc).map(d => d.motivo || 'N/A').join('; ');
+                csv +=
+                    `${cc},"${nomeCC}",${count},${percent.toFixed(1)}%,R$ ${valor.toFixed(2)},"${motivos}"\n`;
+            });
+
+            csv += `\nTotal,"",${total},100%,R$ ${valorFatura.toFixed(2)},""\n`;
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `rateio_${mesAtual}.csv`;
+            link.click();
+
+            mostrarMensagem('msgRegistro', '✅ Rateio exportado com sucesso!', 'sucesso');
+        }
+
+        // ============================================================
+        // 15. ENVIAR RATEIO POR EMAIL
+        // ============================================================
+        function enviarRateioEmail() {
+            const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
+            const mesAtual = new Date().toISOString().slice(0, 7);
+            const corridasMes = dadosMock.filter(d => d.data.startsWith(mesAtual));
+
+            if (corridasMes.length === 0) {
+                alert('Nenhuma corrida registrada neste mês.');
+                return;
+            }
+
+            // ============================================================
+            // 🔥 ENVIO DO RATEIO PARA O BACKEND
+            // ============================================================
+            const dados = {
+                acao: 'rateio',
+                valorFatura: valorFatura.toString(),
+                mes: mesAtual
+            };
+
+            fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(dados)
+                })
+                .then(() => {
+                    mostrarMensagem('msgRegistro', '✅ Rateio enviado por email para Financeiro e Gestor!', 'sucesso');
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar rateio. Tente novamente.', 'erro');
+                });
+        }
+
+        // ============================================================
+        // 16. FUNÇÃO AUXILIAR - MENSAGENS
+        // ============================================================
+        function mostrarMensagem(id, texto, tipo) {
+            const el = document.getElementById(id);
+            el.innerHTML = texto;
+            el.className = 'mensagem ' + tipo;
+            el.style.display = 'block';
+            setTimeout(() => {
+                if (el.style.display !== 'none') {
+                    el.style.display = 'none';
+                }
+            }, 8000);
+        }
+    </script>
+</body>
+</html>
