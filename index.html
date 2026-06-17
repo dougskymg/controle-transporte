@@ -22,7 +22,6 @@
             margin: 0 auto;
         }
 
-        /* HEADER */
         .header {
             background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
             color: white;
@@ -95,6 +94,9 @@
             color: white;
             padding: 5px 12px;
             font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         .btn-danger:hover {
@@ -122,7 +124,6 @@
             gap: 8px;
         }
 
-        /* CARDS RESUMO */
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -161,7 +162,6 @@
             color: #6f42c1;
         }
 
-        /* TABS */
         .tabs {
             display: flex;
             gap: 5px;
@@ -206,7 +206,6 @@
             display: block;
         }
 
-        /* FORMULÁRIO */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -289,7 +288,6 @@
             transform: none;
         }
 
-        /* AUTOCOMPLETE */
         .sugestoes {
             position: absolute;
             background: white;
@@ -346,7 +344,6 @@
             color: #999;
         }
 
-        /* TABELAS */
         .table-responsive {
             overflow-x: auto;
             margin-top: 15px;
@@ -411,7 +408,6 @@
             color: #856404;
         }
 
-        /* FILTROS */
         .filtros {
             display: flex;
             gap: 15px;
@@ -430,7 +426,6 @@
             font-size: 12px;
         }
 
-        /* MENSAGENS */
         .mensagem {
             padding: 15px;
             border-radius: 8px;
@@ -459,7 +454,6 @@
             border: 1px solid #b8daff;
         }
 
-        /* RATEIO */
         .rateio-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -544,7 +538,6 @@
             margin-bottom: 10px;
         }
 
-        /* DASHBOARD */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -636,7 +629,6 @@
             background: #dc3545;
         }
 
-        /* RESPONSIVO */
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -672,9 +664,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- ============================================ -->
         <!-- HEADER -->
-        <!-- ============================================ -->
         <div class="header">
             <h1>🚗 Controle de Transporte</h1>
             <div class="header-actions">
@@ -690,9 +680,7 @@
             </div>
         </div>
 
-        <!-- ============================================ -->
         <!-- CARDS RESUMO -->
-        <!-- ============================================ -->
         <div class="cards">
             <div class="card">
                 <div class="label">Total de Corridas (Hoje)</div>
@@ -720,9 +708,7 @@
             </div>
         </div>
 
-        <!-- ============================================ -->
         <!-- TABS -->
-        <!-- ============================================ -->
         <div class="tabs">
             <button class="tab active" onclick="abrirTab('registro')">📝 Registrar</button>
             <button class="tab" onclick="abrirTab('historico')">📋 Histórico</button>
@@ -730,9 +716,7 @@
             <button class="tab" onclick="abrirTab('dashboard')">📊 Dashboard</button>
         </div>
 
-        <!-- ============================================ -->
         <!-- TAB 1: REGISTRO -->
-        <!-- ============================================ -->
         <div class="tab-content active" id="tab-registro">
             <h2 style="margin-bottom: 20px;">📝 Registrar Utilização</h2>
 
@@ -766,9 +750,6 @@
                         </small>
                     </div>
 
-                    <!-- ========================================== -->
-                    <!-- CAMPO MOTIVO DA SOLICITAÇÃO -->
-                    <!-- ========================================== -->
                     <div class="form-group full">
                         <label>📌 Motivo da Solicitação <span class="required">*</span></label>
                         <select id="motivo" required>
@@ -782,7 +763,6 @@
                         </select>
                     </div>
 
-                    <!-- Campo "Outros" (aparece apenas quando selecionado) -->
                     <div class="form-group full" id="grupoOutroMotivo" style="display: none;">
                         <label>📝 Especificar Outro Motivo <span class="required">*</span></label>
                         <input type="text" id="outroMotivo" placeholder="Digite o motivo...">
@@ -817,9 +797,7 @@
             <div class="mensagem" id="msgRegistro"></div>
         </div>
 
-        <!-- ============================================ -->
         <!-- TAB 2: HISTÓRICO -->
-        <!-- ============================================ -->
         <div class="tab-content" id="tab-historico">
             <h2 style="margin-bottom: 10px;">📋 Histórico de Utilização</h2>
 
@@ -890,9 +868,7 @@
             </div>
         </div>
 
-        <!-- ============================================ -->
         <!-- TAB 3: RATEIO -->
-        <!-- ============================================ -->
         <div class="tab-content" id="tab-rateio">
             <h2 style="margin-bottom: 10px;">💰 Rateio Mensal por Centro de Custo</h2>
 
@@ -929,31 +905,28 @@
             </div>
         </div>
 
-        <!-- ============================================ -->
         <!-- TAB 4: DASHBOARD -->
-        <!-- ============================================ -->
         <div class="tab-content" id="tab-dashboard">
             <h2 style="margin-bottom: 20px;">📊 Dashboard de Utilização</h2>
             <div id="dashboardContainer">
-                <!-- Preenchido dinamicamente -->
+                <div style="text-align:center; padding:40px; color:#666;">⏳ Carregando dados...</div>
             </div>
         </div>
     </div>
 
-    <!-- ============================================ -->
+    <!-- ============================================================ -->
     <!-- SCRIPT PRINCIPAL -->
-    <!-- ============================================ -->
+    <!-- ============================================================ -->
     <script>
         // ============================================================
         // 🔧 CONFIGURAÇÃO - URL DO BACKEND (Google Apps Script)
         // ============================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwMX0HBKcjepVuTuFlBJl4K_9w-BiQl8JUgeq_5tBDWO47ClhF9UKFoCzGOvA_dczFq/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgxcLhlD2WZ3_kBkwko5v-G_S2y_P93LiwJI_KpIwWtrN7MfkGe7YZBXrsLTwn3yHB/exec';
 
         // ============================================================
         // 1. CENTROS DE CUSTO - COMPLETO
         // ============================================================
         const CENTROS_CUSTO = {
-            // FILIAL 7 - PRODUÇÃO
             '1.07001.01.002': { nome: 'Usinagem Mecanica Pesada', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
             '1.07001.01.004': { nome: 'Ferramentaria', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
             '1.07001.02.001': { nome: 'Preparacao', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
@@ -965,8 +938,6 @@
             '1.07001.03.007': { nome: 'Forno de Tratamento Termico', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
             '1.07001.03.008': { nome: 'Linha Automatizada', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
             '1.07001.07.001': { nome: 'Controle de Qualidade', grupo: '🏭 FILIAL 7 - PRODUÇÃO' },
-
-            // FILIAL 7 - ADMINISTRATIVO/SUPORTE
             '1.07002.03.001': { nome: 'Almoxarifado', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
             '1.07002.04.001': { nome: 'Manutenção e Expansão', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
             '1.07002.05.001': { nome: 'Planejamento PCP', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
@@ -987,16 +958,12 @@
             '1.07002.12.002': { nome: 'Sistema Garantia Qualidade', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
             '1.07002.13.001': { nome: 'Excelência Operacional', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
             '1.07002.14.001': { nome: 'Logística', grupo: '🔧 FILIAL 7 - ADMINISTRATIVO' },
-
-            // COMERCIAL
             '2.07001.01.002': { nome: 'Comercial Indústria', grupo: '💼 COMERCIAL' },
             '2.07001.01.004': { nome: 'Marketing', grupo: '💼 COMERCIAL' },
             '2.07001.01.005': { nome: 'Comercial Subsea', grupo: '💼 COMERCIAL' },
             '2.07001.01.007': { nome: 'Field Service', grupo: '💼 COMERCIAL' },
             '2.07001.01.009': { nome: 'Comercial Mooring', grupo: '💼 COMERCIAL' },
             '2.07001.01.010': { nome: 'Engenharia de Aplicação e Vendas', grupo: '💼 COMERCIAL' },
-
-            // ADMINISTRATIVO GERAL
             '2.07001.02.001': { nome: 'Gente & Gestão', grupo: '📊 ADMINISTRATIVO GERAL' },
             '2.07001.03.001': { nome: 'Financeiro', grupo: '📊 ADMINISTRATIVO GERAL' },
             '2.07001.03.002': { nome: 'Gerencia de Projetos', grupo: '📊 ADMINISTRATIVO GERAL' },
@@ -1012,7 +979,6 @@
             '2.07001.06.002': { nome: 'Delp USA', grupo: '📊 ADMINISTRATIVO GERAL' }
         };
 
-        // Mapeamento de motivos para exibição
         const MOTIVOS = {
             'HORA_EXTRA': '⏰ Hora Extra',
             'SAIDA_FRETADO': '🚌 Saída Após Fretado',
@@ -1022,33 +988,10 @@
             'OUTROS': '📝 Outros'
         };
 
-        // ============================================================
-        // 2. DADOS MOCK (Simula banco de dados - serão substituídos pelos dados reais)
-        // ============================================================
-        let dadosMock = [
-            { id: 1, data: '2026-06-15T08:00', tipo: 'TAXI', cc: '1.07001.01.002', solicitante: 'João Silva', motivo: 'HORA_EXTRA',
-                destino: 'Centro', motorista: 'Carlos' },
-            { id: 2, data: '2026-06-15T09:30', tipo: 'UBER', cc: '2.07001.03.008', solicitante: 'Maria Santos',
-                motivo: 'REUNIAO', destino: 'Aeroporto', motorista: 'Ana' },
-            { id: 3, data: '2026-06-15T10:15', tipo: 'TAXI', cc: '1.07002.07.001', solicitante: 'Pedro Costa',
-                motivo: 'SAIDA_FRETADO', destino: 'Zona Sul', motorista: 'Roberto' },
-            { id: 4, data: '2026-06-15T11:30', tipo: 'UBER', cc: '2.07001.03.004', solicitante: 'Lucas Oliveira',
-                motivo: 'TREINAMENTO', destino: 'Escritório', motorista: 'Fernanda' },
-            { id: 5, data: '2026-06-15T13:00', tipo: 'TAXI', cc: '2.07001.01.002', solicitante: 'João Silva', motivo: 'ATRASO',
-                destino: 'Shopping', motorista: 'Carlos' },
-            { id: 6, data: '2026-06-15T14:30', tipo: 'UBER', cc: '2.07001.03.001', solicitante: 'Ana Pereira',
-                motivo: 'OUTROS', destino: 'Banco', motorista: 'Marcos' },
-            { id: 7, data: '2026-06-15T16:00', tipo: 'TAXI', cc: '1.07002.03.001', solicitante: 'Carla Lima',
-                motivo: 'HORA_EXTRA', destino: 'Evento', motorista: 'Roberto' },
-            { id: 8, data: '2026-06-15T17:45', tipo: 'TAXI', cc: '2.07001.03.011', solicitante: 'Paulo Mendes',
-                motivo: 'REUNIAO', destino: 'Fornecedor', motorista: 'Carlos' },
-        ];
-
-        let ultimoId = dadosMock.length;
         let statusEnvio = 'pendente';
 
         // ============================================================
-        // 3. INICIALIZAÇÃO
+        // 2. INICIALIZAÇÃO
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
@@ -1058,24 +1001,22 @@
 
             const dataPadrao = now.toISOString().slice(0, 16);
             document.getElementById('dataCorrida').value = dataPadrao;
-
             document.getElementById('filtroData').value = now.toISOString().slice(0, 10);
 
             preencherFiltroCC();
             configurarAutocomplete();
             configurarMotivo();
-            atualizarResumo();
+
             carregarHistorico();
             calcularRateio();
             carregarDashboard();
 
-            // Mostra no console que a URL está configurada
             console.log('✅ Sistema conectado ao Google Apps Script:');
             console.log('🔗 URL:', SCRIPT_URL);
         });
 
         // ============================================================
-        // 4. PREENCHER FILTRO DE CC
+        // 3. PREENCHER FILTRO DE CC
         // ============================================================
         function preencherFiltroCC() {
             const select = document.getElementById('filtroCC');
@@ -1089,7 +1030,7 @@
         }
 
         // ============================================================
-        // 5. AUTOCOMPLETE
+        // 4. AUTOCOMPLETE
         // ============================================================
         function configurarAutocomplete() {
             const buscaInput = document.getElementById('buscaCC');
@@ -1168,7 +1109,7 @@
         }
 
         // ============================================================
-        // 6. CONFIGURAR CAMPO MOTIVO
+        // 5. CONFIGURAR CAMPO MOTIVO
         // ============================================================
         function configurarMotivo() {
             const selectMotivo = document.getElementById('motivo');
@@ -1189,7 +1130,7 @@
         }
 
         // ============================================================
-        // 7. FUNÇÕES DE TABS
+        // 6. FUNÇÕES DE TABS
         // ============================================================
         function abrirTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -1214,13 +1155,12 @@
         }
 
         // ============================================================
-        // 8. REGISTRAR CORRIDA (COM INTEGRAÇÃO REAL)
+        // 7. REGISTRAR CORRIDA
         // ============================================================
         document.getElementById('formRegistro').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const ccCodigo = document.getElementById('centroCusto').value;
-            const ccNome = document.getElementById('buscaCC').value;
 
             if (!ccCodigo) {
                 mostrarMensagem('msgRegistro', '❌ Selecione um Centro de Custo válido!', 'erro');
@@ -1270,9 +1210,6 @@
             btn.disabled = true;
             btn.textContent = '⏳ Registrando...';
 
-            // ============================================================
-            // 🔥 ENVIO PARA O GOOGLE APPS SCRIPT (BACKEND REAL)
-            // ============================================================
             fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -1282,13 +1219,11 @@
                     body: new URLSearchParams(dados)
                 })
                 .then(() => {
-                    // Como é no-cors, não temos resposta, mas o script executou
                     mostrarMensagem('msgRegistro',
                         `✅ Corrida registrada com sucesso!<br><strong>CC:</strong> ${ccCodigo} - ${dados.ccNome}<br><strong>Motivo:</strong> ${dados.motivo}`,
                         'sucesso'
                     );
 
-                    // Limpar formulário
                     document.getElementById('formRegistro').reset();
                     document.getElementById('centroCusto').value = '';
                     document.getElementById('buscaCC').value = '';
@@ -1301,7 +1236,6 @@
 
                     statusEnvio = 'pendente';
                     atualizarStatusResumo();
-                    atualizarResumo();
                     carregarHistorico();
                     calcularRateio();
                     carregarDashboard();
@@ -1330,44 +1264,8 @@
         }
 
         // ============================================================
-        // 9. ATUALIZAR RESUMO
+        // 8. ATUALIZAR STATUS RESUMO
         // ============================================================
-        function atualizarResumo() {
-            const hoje = new Date().toISOString().slice(0, 10);
-            const corridasHoje = dadosMock.filter(d => d.data.startsWith(hoje));
-
-            const total = corridasHoje.length;
-            const taxis = corridasHoje.filter(d => d.tipo === 'TAXI').length;
-            const ubers = corridasHoje.filter(d => d.tipo === 'UBER').length;
-
-            const ccs = [...new Set(corridasHoje.map(d => d.cc))];
-
-            let ccCount = {};
-            corridasHoje.forEach(d => {
-                ccCount[d.cc] = (ccCount[d.cc] || 0) + 1;
-            });
-            let topCC = '-';
-            let maxCount = 0;
-            for (let cc in ccCount) {
-                if (ccCount[cc] > maxCount) {
-                    maxCount = ccCount[cc];
-                    topCC = cc + ' - ' + (CENTROS_CUSTO[cc]?.nome || cc);
-                }
-            }
-
-            const dias = new Date().getDate();
-            const media = total > 0 ? (total / dias).toFixed(1) : 0;
-
-            document.getElementById('totalCorridas').textContent = total;
-            document.getElementById('totalTaxi').textContent = taxis;
-            document.getElementById('totalUber').textContent = ubers;
-            document.getElementById('totalCC').textContent = ccs.length || 0;
-            document.getElementById('mediaDia').textContent = media;
-            document.getElementById('ccTop').textContent = topCC;
-
-            atualizarStatusResumo();
-        }
-
         function atualizarStatusResumo() {
             const el = document.getElementById('statusResumo');
             if (statusEnvio === 'enviado') {
@@ -1378,7 +1276,7 @@
         }
 
         // ============================================================
-        // 10. CARREGAR HISTÓRICO
+        // 9. CARREGAR HISTÓRICO - COM DADOS REAIS
         // ============================================================
         function carregarHistorico() {
             const filtroCC = document.getElementById('filtroCC').value;
@@ -1386,57 +1284,114 @@
             const filtroTipo = document.getElementById('filtroTipo').value;
             const filtroMotivo = document.getElementById('filtroMotivo').value;
 
-            let dadosFiltrados = [...dadosMock];
-
-            if (filtroCC) {
-                dadosFiltrados = dadosFiltrados.filter(d => d.cc === filtroCC);
-            }
-            if (filtroData) {
-                dadosFiltrados = dadosFiltrados.filter(d => d.data.startsWith(filtroData));
-            }
-            if (filtroTipo) {
-                dadosFiltrados = dadosFiltrados.filter(d => d.tipo === filtroTipo);
-            }
-            if (filtroMotivo) {
-                dadosFiltrados = dadosFiltrados.filter(d => d.motivo && d.motivo.startsWith(filtroMotivo));
-            }
-
             const tbody = document.getElementById('tabelaHistorico');
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#666;">⏳ Carregando dados...</td></tr>';
 
-            if (dadosFiltrados.length === 0) {
-                tbody.innerHTML = `
+            fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        acao: 'listar'
+                    })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    try {
+                        let dados = JSON.parse(data);
+
+                        if (!Array.isArray(dados) || dados.length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="8" class="empty-state">
+                                        <div class="icon">📭</div>
+                                        Nenhuma corrida encontrada na planilha.
+                                    </td>
+                                </tr>
+                            `;
+                            return;
+                        }
+
+                        let dadosFiltrados = dados;
+
+                        if (filtroCC) {
+                            dadosFiltrados = dadosFiltrados.filter(d => d.CC === filtroCC);
+                        }
+                        if (filtroData) {
+                            dadosFiltrados = dadosFiltrados.filter(d => d.Data && d.Data.startsWith(filtroData));
+                        }
+                        if (filtroTipo) {
+                            dadosFiltrados = dadosFiltrados.filter(d => d.Tipo === filtroTipo);
+                        }
+                        if (filtroMotivo) {
+                            dadosFiltrados = dadosFiltrados.filter(d => d.Motivo && d.Motivo.startsWith(filtroMotivo));
+                        }
+
+                        if (dadosFiltrados.length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="8" class="empty-state">
+                                        <div class="icon">🔍</div>
+                                        Nenhuma corrida encontrada com os filtros atuais.
+                                    </td>
+                                </tr>
+                            `;
+                            return;
+                        }
+
+                        dadosFiltrados.sort((a, b) => (b.ID || 0) - (a.ID || 0));
+
+                        tbody.innerHTML = '';
+                        dadosFiltrados.forEach(item => {
+                            const dataFormatada = item.Data ? new Date(item.Data).toLocaleString(
+                            'pt-BR') : '-';
+                            const nomeCC = CENTROS_CUSTO[item.CC]?.nome || item.CC_Nome || item.CC || '-';
+                            const motivoExibicao = item.Motivo || '-';
+
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${item.ID || '-'}</td>
+                                <td>${dataFormatada}</td>
+                                <td><span class="badge ${item.Tipo === 'TAXI' ? 'badge-taxi' : 'badge-uber'}">${item.Tipo || '-'}</span></td>
+                                <td><strong>${item.CC || '-'}</strong><br><small style="color:#666;">${nomeCC}</small></td>
+                                <td>${item.Solicitante || '-'}</td>
+                                <td><span class="badge-motivo">${motivoExibicao}</span></td>
+                                <td>${item.Destino || '-'}</td>
+                                <td>
+                                    <button class="btn btn-danger" onclick="excluirCorrida(${item.ID})">
+                                        🗑️
+                                    </button>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+
+                        atualizarResumoComDadosReais(dados);
+
+                    } catch (e) {
+                        console.error('Erro ao processar dados:', e);
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="8" style="text-align:center; color:#dc3545;">
+                                    ❌ Erro ao carregar dados. Verifique a conexão com a planilha.
+                                    <br><small>${e.message}</small>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    tbody.innerHTML = `
                         <tr>
-                            <td colspan="8" class="empty-state">
-                                <div class="icon">📭</div>
-                                Nenhuma corrida encontrada.
+                            <td colspan="8" style="text-align:center; color:#dc3545;">
+                                ❌ Erro de conexão. Tente novamente.
+                                <br><small>${error.message}</small>
                             </td>
                         </tr>
                     `;
-                return;
-            }
-
-            tbody.innerHTML = '';
-            dadosFiltrados.sort((a, b) => b.id - a.id).forEach(item => {
-                const dataFormatada = new Date(item.data).toLocaleString('pt-BR');
-                const nomeCC = CENTROS_CUSTO[item.cc]?.nome || item.cc;
-                const motivoExibicao = item.motivo || '-';
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                        <td>${item.id}</td>
-                        <td>${dataFormatada}</td>
-                        <td><span class="badge ${item.tipo === 'TAXI' ? 'badge-taxi' : 'badge-uber'}">${item.tipo}</span></td>
-                        <td><strong>${item.cc}</strong><br><small style="color:#666;">${nomeCC}</small></td>
-                        <td>${item.solicitante}</td>
-                        <td><span class="badge-motivo">${motivoExibicao}</span></td>
-                        <td>${item.destino}</td>
-                        <td>
-                            <button class="btn btn-danger" onclick="excluirCorrida(${item.id})">
-                                🗑️
-                            </button>
-                        </td>
-                    `;
-                tbody.appendChild(tr);
-            });
+                });
         }
 
         function limparFiltrosHistorico() {
@@ -1447,329 +1402,526 @@
             carregarHistorico();
         }
 
-        function excluirCorrida(id) {
-            if (confirm('Tem certeza que deseja excluir esta corrida?')) {
-                dadosMock = dadosMock.filter(d => d.id !== id);
-                statusEnvio = 'pendente';
-                atualizarStatusResumo();
-                atualizarResumo();
-                carregarHistorico();
-                calcularRateio();
-                carregarDashboard();
-                mostrarMensagem('msgRegistro', '🗑️ Corrida excluída com sucesso!', 'sucesso');
+        // ============================================================
+        // 10. ATUALIZAR RESUMO COM DADOS REAIS
+        // ============================================================
+        function atualizarResumoComDadosReais(dados) {
+            if (!dados || dados.length === 0) return;
+
+            const hoje = new Date().toISOString().slice(0, 10);
+            const corridasHoje = dados.filter(d => d.Data && d.Data.startsWith(hoje));
+
+            const total = corridasHoje.length;
+            const taxis = corridasHoje.filter(d => d.Tipo === 'TAXI').length;
+            const ubers = corridasHoje.filter(d => d.Tipo === 'UBER').length;
+
+            const ccs = [...new Set(corridasHoje.map(d => d.CC))];
+
+            let ccCount = {};
+            corridasHoje.forEach(d => {
+                ccCount[d.CC] = (ccCount[d.CC] || 0) + 1;
+            });
+
+            let topCC = '-';
+            let maxCount = 0;
+            for (let cc in ccCount) {
+                if (ccCount[cc] > maxCount) {
+                    maxCount = ccCount[cc];
+                    topCC = cc + ' - ' + (CENTROS_CUSTO[cc]?.nome || cc);
+                }
             }
+
+            const dias = new Date().getDate() || 1;
+            const media = total > 0 ? (total / dias).toFixed(1) : 0;
+
+            document.getElementById('totalCorridas').textContent = total;
+            document.getElementById('totalTaxi').textContent = taxis;
+            document.getElementById('totalUber').textContent = ubers;
+            document.getElementById('totalCC').textContent = ccs.length || 0;
+            document.getElementById('mediaDia').textContent = media;
+            document.getElementById('ccTop').textContent = topCC;
         }
 
         // ============================================================
-        // 11. CALCULAR RATEIO
+        // 11. CALCULAR RATEIO - COM DADOS REAIS
         // ============================================================
         function calcularRateio() {
             const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
             const mesAtual = new Date().toISOString().slice(0, 7);
-            const corridasMes = dadosMock.filter(d => d.data.startsWith(mesAtual));
-
             const grid = document.getElementById('rateioGrid');
 
-            if (corridasMes.length === 0) {
-                grid.innerHTML = `
-                        <div class="total-rateio" style="grid-column: 1 / -1;">
-                            <div class="icon" style="font-size: 48px;">📊</div>
-                            <p>Nenhuma corrida registrada neste mês.</p>
-                        </div>
-                    `;
-                return;
-            }
-
-            let ccCount = {};
-            corridasMes.forEach(d => {
-                ccCount[d.cc] = (ccCount[d.cc] || 0) + 1;
-            });
-
-            const totalCorridas = corridasMes.length;
-            const ccs = Object.keys(ccCount).sort();
-
-            grid.innerHTML = '';
-            let totalRateado = 0;
-
-            ccs.forEach(cc => {
-                const quantidade = ccCount[cc];
-                const percentual = (quantidade / totalCorridas) * 100;
-                const valorRateado = (percentual / 100) * valorFatura;
-                totalRateado += valorRateado;
-                const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
-
-                const div = document.createElement('div');
-                div.className = 'rateio-card';
-                div.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="cc-name">🏢 ${cc}</span>
-                            <span class="cc-percent">${percentual.toFixed(1)}%</span>
-                        </div>
-                        <div style="font-size: 12px; color: #666;">${nomeCC}</div>
-                        <div class="cc-corridas">${quantidade}</div>
-                        <div style="font-size: 13px; color: #666;">corridas</div>
-                        <div class="cc-valor">R$ ${valorRateado.toFixed(2)}</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${percentual}%;"></div>
-                        </div>
-                    `;
-                grid.appendChild(div);
-            });
-
-            const totalDiv = document.createElement('div');
-            totalDiv.className = 'total-rateio';
-            totalDiv.innerHTML = `
-                    <strong>Total Rateado: R$ ${totalRateado.toFixed(2)}</strong>
-                    <br>
-                    <small>${totalCorridas} corridas • ${ccs.length} Centros de Custo</small>
-                    <br>
-                    <small style="color: #666;">
-                        💰 Valor da fatura: R$ ${valorFatura.toFixed(2)} | 
-                        Diferença: R$ ${(valorFatura - totalRateado).toFixed(2)}
-                    </small>
-                `;
-            grid.appendChild(totalDiv);
-        }
-
-        // ============================================================
-        // 12. DASHBOARD
-        // ============================================================
-        function carregarDashboard() {
-            const mesAtual = new Date().toISOString().slice(0, 7);
-            const corridasMes = dadosMock.filter(d => d.data.startsWith(mesAtual));
-            const container = document.getElementById('dashboardContainer');
-
-            if (corridasMes.length === 0) {
-                container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📊</div>
-                            <p>Nenhum dado disponível para análise.</p>
-                        </div>
-                    `;
-                return;
-            }
-
-            let ccCount = {};
-            let tipoCount = { TAXI: 0, UBER: 0 };
-            let motivoCount = {};
-            corridasMes.forEach(d => {
-                ccCount[d.cc] = (ccCount[d.cc] || 0) + 1;
-                tipoCount[d.tipo] = (tipoCount[d.tipo] || 0) + 1;
-                const motivoKey = d.motivo ? d.motivo.split(':')[0].trim() : 'OUTROS';
-                motivoCount[motivoKey] = (motivoCount[motivoKey] || 0) + 1;
-            });
-
-            const total = corridasMes.length;
-            const topCCs = Object.entries(ccCount)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-
-            const topMotivos = Object.entries(motivoCount)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-
-            let html = `
-                    <div class="dashboard-grid">
-                        <div class="dashboard-card">
-                            <h3>📈 Distribuição por Tipo</h3>
-                            <div class="dashboard-item">
-                                <span class="label-dash">🚕 Táxi</span>
-                                <span class="value-dash">${tipoCount.TAXI} (${((tipoCount.TAXI/total)*100).toFixed(1)}%)</span>
-                            </div>
-                            <div class="dashboard-item">
-                                <span class="label-dash">🚙 Uber</span>
-                                <span class="value-dash">${tipoCount.UBER} (${((tipoCount.UBER/total)*100).toFixed(1)}%)</span>
-                            </div>
-                            <div class="dashboard-item" style="border-bottom: none; margin-top: 10px; font-weight: bold;">
-                                <span class="label-dash">Total</span>
-                                <span class="value-dash" style="color: #333;">${total} corridas</span>
-                            </div>
-                        </div>
-                        
-                        <div class="dashboard-card">
-                            <h3>🏆 Top 5 CCs</h3>
-                            ${topCCs.map(([cc, count], index) => {
-                                const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
-                                const emojis = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
-                                return `
-                                    <div class="dashboard-item">
-                                        <span class="label-dash">${emojis[index] || '•'} ${cc}</span>
-                                        <span class="value-dash">${count} (${((count/total)*100).toFixed(1)}%)</span>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                `;
-
-            // Motivos mais comuns
-            html += `
-                    <div class="dashboard-card" style="margin-top: 20px;">
-                        <h3>📌 Motivos mais comuns</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
-                            ${topMotivos.map(([motivo, count]) => `
-                                <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-                                    <div style="font-weight: bold; font-size: 20px; color: #1a73e8;">${count}</div>
-                                    <div style="font-size: 12px; color: #666;">${MOTIVOS[motivo] || motivo}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-
-            // Todos os CCs
-            const ccs = Object.keys(ccCount).sort();
-            html += `
-                    <div class="dashboard-card" style="margin-top: 20px;">
-                        <h3>📊 Todos os Centros de Custo</h3>
-                        <div class="cc-tags-grid">
-                            ${ccs.map(cc => `
-                                <div class="cc-tag">
-                                    <div class="numero">${ccCount[cc]}</div>
-                                    <div class="nome-cc">${cc}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-
-            container.innerHTML = html;
-        }
-
-        // ============================================================
-        // 13. ENVIAR RESUMO DIÁRIO PARA FACILITIES
-        // ============================================================
-        function enviarResumoDiario() {
-            const hoje = new Date().toISOString().slice(0, 10);
-            const corridasHoje = dadosMock.filter(d => d.data.startsWith(hoje));
-
-            if (corridasHoje.length === 0) {
-                mostrarMensagem('msgRegistro', '📭 Nenhuma corrida registrada hoje para enviar.', 'info');
-                return;
-            }
-
-            const btn = document.querySelector('.btn-success');
-            btn.disabled = true;
-            btn.textContent = '⏳ Enviando...';
-
-            // ============================================================
-            // 🔥 ENVIO DO RESUMO PARA O BACKEND
-            // ============================================================
-            const dados = {
-                acao: 'resumo'
-            };
+            grid.innerHTML = '<div class="total-rateio" style="grid-column: 1 / -1;">⏳ Carregando dados...</div>';
 
             fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: new URLSearchParams(dados)
+                    body: new URLSearchParams({
+                        acao: 'listar'
+                    })
                 })
-                .then(() => {
-                    statusEnvio = 'enviado';
-                    atualizarStatusResumo();
+                .then(response => response.text())
+                .then(data => {
+                    try {
+                        let dados = JSON.parse(data);
 
-                    btn.disabled = false;
-                    btn.textContent = '📧 Enviar Resumo do Dia';
+                        if (!Array.isArray(dados) || dados.length === 0) {
+                            grid.innerHTML = `
+                                <div class="total-rateio" style="grid-column: 1 / -1;">
+                                    <div class="icon" style="font-size: 48px;">📊</div>
+                                    <p>Nenhuma corrida registrada na planilha.</p>
+                                </div>
+                            `;
+                            return;
+                        }
 
-                    mostrarMensagem('msgRegistro',
-                        '✅ Resumo do dia enviado para Facilities!<br><small>Destinatário: facilities@empresa.com</small>',
-                        'sucesso'
-                    );
+                        const corridasMes = dados.filter(d => d.Data && d.Data.startsWith(mesAtual));
+
+                        if (corridasMes.length === 0) {
+                            grid.innerHTML = `
+                                <div class="total-rateio" style="grid-column: 1 / -1;">
+                                    <div class="icon" style="font-size: 48px;">📊</div>
+                                    <p>Nenhuma corrida registrada em ${mesAtual}.</p>
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        let ccCount = {};
+                        corridasMes.forEach(d => {
+                            const cc = d.CC;
+                            ccCount[cc] = (ccCount[cc] || 0) + 1;
+                        });
+
+                        const totalCorridas = corridasMes.length;
+                        const ccs = Object.keys(ccCount).sort();
+
+                        grid.innerHTML = '';
+                        let totalRateado = 0;
+
+                        ccs.forEach(cc => {
+                            const quantidade = ccCount[cc];
+                            const percentual = (quantidade / totalCorridas) * 100;
+                            const valorRateado = (percentual / 100) * valorFatura;
+                            totalRateado += valorRateado;
+                            const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
+
+                            const div = document.createElement('div');
+                            div.className = 'rateio-card';
+                            div.innerHTML = `
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span class="cc-name">🏢 ${cc}</span>
+                                    <span class="cc-percent">${percentual.toFixed(1)}%</span>
+                                </div>
+                                <div style="font-size: 12px; color: #666;">${nomeCC}</div>
+                                <div class="cc-corridas">${quantidade}</div>
+                                <div style="font-size: 13px; color: #666;">corridas</div>
+                                <div class="cc-valor">R$ ${valorRateado.toFixed(2)}</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${percentual}%;"></div>
+                                </div>
+                            `;
+                            grid.appendChild(div);
+                        });
+
+                        const totalDiv = document.createElement('div');
+                        totalDiv.className = 'total-rateio';
+                        totalDiv.innerHTML = `
+                            <strong>Total Rateado: R$ ${totalRateado.toFixed(2)}</strong>
+                            <br>
+                            <small>${totalCorridas} corridas • ${ccs.length} Centros de Custo</small>
+                            <br>
+                            <small style="color: #666;">
+                                💰 Valor da fatura: R$ ${valorFatura.toFixed(2)} | 
+                                Diferença: R$ ${(valorFatura - totalRateado).toFixed(2)}
+                            </small>
+                        `;
+                        grid.appendChild(totalDiv);
+
+                    } catch (e) {
+                        console.error('Erro no rateio:', e);
+                        grid.innerHTML = `
+                            <div class="total-rateio" style="grid-column: 1 / -1; color: #dc3545;">
+                                ❌ Erro ao calcular rateio: ${e.message}
+                            </div>
+                        `;
+                    }
                 })
                 .catch(error => {
-                    console.error('Erro:', error);
-                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar resumo. Tente novamente.', 'erro');
+                    console.error('Erro na requisição:', error);
+                    grid.innerHTML = `
+                        <div class="total-rateio" style="grid-column: 1 / -1; color: #dc3545;">
+                            ❌ Erro de conexão: ${error.message}
+                        </div>
+                    `;
+                });
+        }
+
+        // ============================================================
+        // 12. CARREGAR DASHBOARD - COM DADOS REAIS
+        // ============================================================
+        function carregarDashboard() {
+            const container = document.getElementById('dashboardContainer');
+            container.innerHTML = '<div style="text-align:center; padding:40px; color:#666;">⏳ Carregando dados...</div>';
+
+            fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        acao: 'listar'
+                    })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    try {
+                        let dados = JSON.parse(data);
+
+                        if (!Array.isArray(dados) || dados.length === 0) {
+                            container.innerHTML = `
+                                <div class="empty-state">
+                                    <div class="icon">📊</div>
+                                    <p>Nenhum dado disponível para análise.</p>
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        const mesAtual = new Date().toISOString().slice(0, 7);
+                        const corridasMes = dados.filter(d => d.Data && d.Data.startsWith(mesAtual));
+
+                        if (corridasMes.length === 0) {
+                            container.innerHTML = `
+                                <div class="empty-state">
+                                    <div class="icon">📊</div>
+                                    <p>Nenhum dado disponível para ${mesAtual}.</p>
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        let ccCount = {};
+                        let tipoCount = { TAXI: 0, UBER: 0 };
+                        let motivoCount = {};
+
+                        corridasMes.forEach(d => {
+                            ccCount[d.CC] = (ccCount[d.CC] || 0) + 1;
+                            tipoCount[d.Tipo] = (tipoCount[d.Tipo] || 0) + 1;
+                            const motivoKey = d.Motivo ? d.Motivo.split(':')[0].trim() : 'OUTROS';
+                            motivoCount[motivoKey] = (motivoCount[motivoKey] || 0) + 1;
+                        });
+
+                        const total = corridasMes.length;
+                        const topCCs = Object.entries(ccCount)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 5);
+
+                        const topMotivos = Object.entries(motivoCount)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 5);
+
+                        let html = `
+                            <div class="dashboard-grid">
+                                <div class="dashboard-card">
+                                    <h3>📈 Distribuição por Tipo</h3>
+                                    <div class="dashboard-item">
+                                        <span class="label-dash">🚕 Táxi</span>
+                                        <span class="value-dash">${tipoCount.TAXI} (${((tipoCount.TAXI/total)*100).toFixed(1)}%)</span>
+                                    </div>
+                                    <div class="dashboard-item">
+                                        <span class="label-dash">🚙 Uber</span>
+                                        <span class="value-dash">${tipoCount.UBER} (${((tipoCount.UBER/total)*100).toFixed(1)}%)</span>
+                                    </div>
+                                    <div class="dashboard-item" style="border-bottom: none; margin-top: 10px; font-weight: bold;">
+                                        <span class="label-dash">Total</span>
+                                        <span class="value-dash" style="color: #333;">${total} corridas</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="dashboard-card">
+                                    <h3>🏆 Top 5 CCs</h3>
+                                    ${topCCs.map(([cc, count], index) => {
+                                        const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
+                                        const emojis = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+                                        return `
+                                            <div class="dashboard-item">
+                                                <span class="label-dash">${emojis[index] || '•'} ${cc}</span>
+                                                <span class="value-dash">${count} (${((count/total)*100).toFixed(1)}%)</span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `;
+
+                        html += `
+                            <div class="dashboard-card" style="margin-top: 20px;">
+                                <h3>📌 Motivos mais comuns</h3>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                                    ${topMotivos.map(([motivo, count]) => `
+                                        <div style="background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+                                            <div style="font-weight: bold; font-size: 20px; color: #1a73e8;">${count}</div>
+                                            <div style="font-size: 12px; color: #666;">${MOTIVOS[motivo] || motivo}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+
+                        const ccs = Object.keys(ccCount).sort();
+                        html += `
+                            <div class="dashboard-card" style="margin-top: 20px;">
+                                <h3>📊 Todos os Centros de Custo</h3>
+                                <div class="cc-tags-grid">
+                                    ${ccs.map(cc => `
+                                        <div class="cc-tag">
+                                            <div class="numero">${ccCount[cc]}</div>
+                                            <div class="nome-cc">${cc}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+
+                        container.innerHTML = html;
+
+                    } catch (e) {
+                        console.error('Erro no dashboard:', e);
+                        container.innerHTML = `
+                            <div style="text-align:center; padding:40px; color:#dc3545;">
+                                ❌ Erro ao carregar dashboard: ${e.message}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:40px; color:#dc3545;">
+                            ❌ Erro de conexão: ${error.message}
+                        </div>
+                    `;
+                });
+        }
+
+        // ============================================================
+        // 13. ENVIAR RESUMO DIÁRIO - COM DADOS REAIS
+        // ============================================================
+        function enviarResumoDiario() {
+            const btn = document.querySelector('.btn-success');
+            btn.disabled = true;
+            btn.textContent = '⏳ Buscando dados...';
+
+            fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        acao: 'listar'
+                    })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    try {
+                        let dados = JSON.parse(data);
+
+                        if (!Array.isArray(dados) || dados.length === 0) {
+                            mostrarMensagem('msgRegistro', '📭 Nenhuma corrida encontrada na planilha.', 'info');
+                            btn.disabled = false;
+                            btn.textContent = '📧 Enviar Resumo do Dia';
+                            return;
+                        }
+
+                        const hoje = new Date().toISOString().slice(0, 10);
+                        const corridasHoje = dados.filter(d => d.Data && d.Data.startsWith(hoje));
+
+                        if (corridasHoje.length === 0) {
+                            mostrarMensagem('msgRegistro', '📭 Nenhuma corrida registrada hoje.', 'info');
+                            btn.disabled = false;
+                            btn.textContent = '📧 Enviar Resumo do Dia';
+                            return;
+                        }
+
+                        btn.textContent = '⏳ Enviando email...';
+
+                        fetch(SCRIPT_URL, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: new URLSearchParams({
+                                    acao: 'resumo'
+                                })
+                            })
+                            .then(() => {
+                                statusEnvio = 'enviado';
+                                atualizarStatusResumo();
+
+                                btn.disabled = false;
+                                btn.textContent = '📧 Enviar Resumo do Dia';
+
+                                mostrarMensagem('msgRegistro',
+                                    `✅ Resumo do dia enviado para Facilities!<br>
+                                    <small>📊 ${corridasHoje.length} corridas enviadas • Destinatário: facilities@empresa.com</small>`,
+                                    'sucesso'
+                                );
+                            })
+                            .catch(error => {
+                                console.error('Erro ao enviar resumo:', error);
+                                mostrarMensagem('msgRegistro', '❌ Erro ao enviar resumo. Tente novamente.', 'erro');
+                                btn.disabled = false;
+                                btn.textContent = '📧 Enviar Resumo do Dia';
+                            });
+
+                    } catch (e) {
+                        console.error('Erro ao processar dados:', e);
+                        mostrarMensagem('msgRegistro', '❌ Erro ao buscar dados da planilha.', 'erro');
+                        btn.disabled = false;
+                        btn.textContent = '📧 Enviar Resumo do Dia';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    mostrarMensagem('msgRegistro', '❌ Erro de conexão com a planilha.', 'erro');
                     btn.disabled = false;
                     btn.textContent = '📧 Enviar Resumo do Dia';
                 });
         }
 
         // ============================================================
-        // 14. EXPORTAR RATEIO
+        // 14. EXCLUIR CORRIDA
+        // ============================================================
+        function excluirCorrida(id) {
+            if (confirm('Tem certeza que deseja excluir esta corrida?')) {
+                fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            acao: 'excluir',
+                            id: id
+                        })
+                    })
+                    .then(() => {
+                        statusEnvio = 'pendente';
+                        atualizarStatusResumo();
+                        carregarHistorico();
+                        calcularRateio();
+                        carregarDashboard();
+                        mostrarMensagem('msgRegistro', '🗑️ Corrida excluída com sucesso!', 'sucesso');
+                    })
+                    .catch(error => {
+                        console.error('Erro ao excluir:', error);
+                        mostrarMensagem('msgRegistro', '❌ Erro ao excluir. Tente novamente.', 'erro');
+                    });
+            }
+        }
+
+        // ============================================================
+        // 15. EXPORTAR RATEIO
         // ============================================================
         function exportarRateio() {
             const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
             const mesAtual = new Date().toISOString().slice(0, 7);
-            const corridasMes = dadosMock.filter(d => d.data.startsWith(mesAtual));
 
-            if (corridasMes.length === 0) {
-                alert('Nenhuma corrida registrada neste mês.');
-                return;
-            }
+            fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        acao: 'listar'
+                    })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    try {
+                        let dados = JSON.parse(data);
+                        const corridasMes = dados.filter(d => d.Data && d.Data.startsWith(mesAtual));
 
-            let ccCount = {};
-            corridasMes.forEach(d => {
-                ccCount[d.cc] = (ccCount[d.cc] || 0) + 1;
-            });
+                        if (corridasMes.length === 0) {
+                            alert('Nenhuma corrida registrada neste mês.');
+                            return;
+                        }
 
-            const total = corridasMes.length;
-            let csv =
-            'Centro de Custo,Nome,Corridas,Percentual,Valor Rateado,Motivos\n';
+                        let ccCount = {};
+                        corridasMes.forEach(d => {
+                            ccCount[d.CC] = (ccCount[d.CC] || 0) + 1;
+                        });
 
-            Object.entries(ccCount).forEach(([cc, count]) => {
-                const percent = (count / total) * 100;
-                const valor = (percent / 100) * valorFatura;
-                const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
-                const motivos = corridasMes.filter(d => d.cc === cc).map(d => d.motivo || 'N/A').join('; ');
-                csv +=
-                    `${cc},"${nomeCC}",${count},${percent.toFixed(1)}%,R$ ${valor.toFixed(2)},"${motivos}"\n`;
-            });
+                        const total = corridasMes.length;
+                        let csv =
+                        'Centro de Custo,Nome,Corridas,Percentual,Valor Rateado,Motivos\n';
 
-            csv += `\nTotal,"",${total},100%,R$ ${valorFatura.toFixed(2)},""\n`;
+                        Object.entries(ccCount).forEach(([cc, count]) => {
+                            const percent = (count / total) * 100;
+                            const valor = (percent / 100) * valorFatura;
+                            const nomeCC = CENTROS_CUSTO[cc]?.nome || cc;
+                            const motivos = corridasMes.filter(d => d.CC === cc).map(d => d.Motivo || 'N/A').join(
+                            '; ');
+                            csv +=
+                                `${cc},"${nomeCC}",${count},${percent.toFixed(1)}%,R$ ${valor.toFixed(2)},"${motivos}"\n`;
+                        });
 
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `rateio_${mesAtual}.csv`;
-            link.click();
+                        csv += `\nTotal,"",${total},100%,R$ ${valorFatura.toFixed(2)},""\n`;
 
-            mostrarMensagem('msgRegistro', '✅ Rateio exportado com sucesso!', 'sucesso');
+                        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `rateio_${mesAtual}.csv`;
+                        link.click();
+
+                        mostrarMensagem('msgRegistro', '✅ Rateio exportado com sucesso!', 'sucesso');
+
+                    } catch (e) {
+                        console.error('Erro ao exportar:', e);
+                        alert('Erro ao exportar rateio.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    alert('Erro de conexão ao exportar.');
+                });
         }
 
         // ============================================================
-        // 15. ENVIAR RATEIO POR EMAIL
+        // 16. ENVIAR RATEIO POR EMAIL
         // ============================================================
         function enviarRateioEmail() {
             const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
             const mesAtual = new Date().toISOString().slice(0, 7);
-            const corridasMes = dadosMock.filter(d => d.data.startsWith(mesAtual));
 
-            if (corridasMes.length === 0) {
-                alert('Nenhuma corrida registrada neste mês.');
+            if (!valorFatura || valorFatura <= 0) {
+                alert('⚠️ Digite um valor de fatura válido!');
                 return;
             }
 
-            // ============================================================
-            // 🔥 ENVIO DO RATEIO PARA O BACKEND
-            // ============================================================
-            const dados = {
-                acao: 'rateio',
-                valorFatura: valorFatura.toString(),
-                mes: mesAtual
-            };
-
             fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: new URLSearchParams(dados)
+                    body: new URLSearchParams({
+                        acao: 'rateio',
+                        valorFatura: valorFatura.toString(),
+                        mes: mesAtual
+                    })
                 })
                 .then(() => {
                     mostrarMensagem('msgRegistro', '✅ Rateio enviado por email para Financeiro e Gestor!', 'sucesso');
                 })
                 .catch(error => {
-                    console.error('Erro:', error);
+                    console.error('Erro ao enviar rateio:', error);
                     mostrarMensagem('msgRegistro', '❌ Erro ao enviar rateio. Tente novamente.', 'erro');
                 });
         }
 
         // ============================================================
-        // 16. FUNÇÃO AUXILIAR - MENSAGENS
+        // 17. FUNÇÃO AUXILIAR - MENSAGENS
         // ============================================================
         function mostrarMensagem(id, texto, tipo) {
             const el = document.getElementById(id);
