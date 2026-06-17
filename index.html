@@ -23,30 +23,14 @@
         }
         .header h1 { font-size: 26px; display: flex; align-items: center; gap: 12px; }
         .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-        .header-actions .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.3s; font-size: 14px; }
         .btn-success { background: #28a745; color: white; }
-        .btn-success:hover { background: #218838; transform: translateY(-2px); }
+        .btn-success:hover { background: #218838; }
         .btn-warning { background: #fd7e14; color: white; }
-        .btn-warning:hover { background: #e66a0a; transform: translateY(-2px); }
+        .btn-warning:hover { background: #e66a0a; }
         .btn-primary { background: #1a73e8; color: white; }
-        .btn-primary:hover { background: #1557b0; transform: translateY(-2px); }
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-            padding: 5px 12px;
-            font-size: 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+        .btn-primary:hover { background: #1557b0; }
+        .btn-danger { background: #dc3545; color: white; padding: 5px 12px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; }
         .btn-danger:hover { background: #c82333; }
         .btn-outline { background: transparent; border: 2px solid white; color: white; }
         .btn-outline:hover { background: white; color: #1a73e8; }
@@ -132,8 +116,6 @@
             font-family: inherit;
         }
         input:focus, select:focus, textarea:focus { outline: none; border-color: #1a73e8; }
-        input.invalid { border-color: #dc3545; }
-        input.valid { border-color: #28a745; }
 
         .btn-submit {
             padding: 12px 30px;
@@ -146,8 +128,8 @@
             background: #1a73e8;
             color: white;
         }
-        .btn-submit:hover { background: #1557b0; transform: translateY(-2px); }
-        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-submit:hover { background: #1557b0; }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .sugestoes {
             position: absolute;
@@ -164,18 +146,11 @@
             left: 0;
             margin-top: 2px;
         }
-        .sugestoes .item {
-            padding: 10px 14px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.2s;
-        }
-        .sugestoes .item:last-child { border-bottom: none; }
+        .sugestoes .item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
         .sugestoes .item:hover { background: #e8f0fe; }
         .sugestoes .item .codigo { font-weight: bold; color: #1a73e8; font-size: 13px; }
         .sugestoes .item .nome { color: #333; margin-left: 8px; font-size: 13px; }
         .sugestoes .item .grupo { font-size: 11px; color: #888; display: block; margin-top: 2px; }
-        .sugestoes .sem-resultado { padding: 15px; text-align: center; color: #999; }
 
         .table-responsive { overflow-x: auto; margin-top: 15px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -225,14 +200,11 @@
             padding: 18px 20px;
             border-radius: 10px;
             border-left: 4px solid #1a73e8;
-            transition: transform 0.2s;
         }
-        .rateio-card:hover { transform: scale(1.02); }
         .rateio-card .cc-name { font-weight: bold; font-size: 14px; }
         .rateio-card .cc-corridas { font-size: 28px; font-weight: bold; color: #1a73e8; margin: 5px 0; }
         .rateio-card .cc-percent { color: #666; font-size: 13px; }
         .rateio-card .cc-valor { font-size: 18px; font-weight: bold; color: #28a745; margin-top: 5px; }
-
         .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; margin-top: 8px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #1a73e8, #0d47a1); border-radius: 4px; transition: width 0.5s; }
 
@@ -274,7 +246,6 @@
         .status-envio .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .dot.green { background: #28a745; }
         .dot.yellow { background: #fd7e14; }
-        .dot.red { background: #dc3545; }
 
         .erro-conexao {
             background: #f8d7da;
@@ -326,12 +297,7 @@
             <div class="card"><div class="label">Centros de Custo</div><div class="valor green" id="totalCC">0</div></div>
             <div class="card"><div class="label">Média por Dia</div><div class="valor orange" id="mediaDia">0</div></div>
             <div class="card"><div class="label">CC Mais Usado</div><div class="valor purple" id="ccTop">-</div></div>
-            <div class="card">
-                <div class="label">Status Resumo</div>
-                <div class="valor" style="font-size: 16px;" id="statusResumo">
-                    <span class="status-envio"><span class="dot yellow"></span> Pendente</span>
-                </div>
-            </div>
+            <div class="card"><div class="label">Status Resumo</div><div class="valor" style="font-size: 16px;" id="statusResumo"><span class="status-envio"><span class="dot yellow"></span> Pendente</span></div></div>
         </div>
 
         <!-- ERRO DE CONEXÃO -->
@@ -354,21 +320,9 @@
             <h2 style="margin-bottom: 20px;">📝 Registrar Utilização</h2>
             <form id="formRegistro">
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>📅 Data/Hora <span class="required">*</span></label>
-                        <input type="datetime-local" id="dataCorrida" required>
-                    </div>
-                    <div class="form-group">
-                        <label>🚗 Tipo <span class="required">*</span></label>
-                        <select id="tipoTransporte" required>
-                            <option value="TAXI">🚕 Táxi</option>
-                            <option value="UBER">🚙 Uber</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>👤 Solicitante <span class="required">*</span></label>
-                        <input type="text" id="solicitante" placeholder="Nome do funcionário" required>
-                    </div>
+                    <div class="form-group"><label>📅 Data/Hora <span class="required">*</span></label><input type="datetime-local" id="dataCorrida" required></div>
+                    <div class="form-group"><label>🚗 Tipo <span class="required">*</span></label><select id="tipoTransporte" required><option value="TAXI">🚕 Táxi</option><option value="UBER">🚙 Uber</option></select></div>
+                    <div class="form-group"><label>👤 Solicitante <span class="required">*</span></label><input type="text" id="solicitante" placeholder="Nome do funcionário" required></div>
                     <div class="form-group half">
                         <label>🏢 Centro de Custo <span class="required">*</span></label>
                         <input type="text" id="buscaCC" placeholder="Digite o código ou nome do CC..." autocomplete="off">
@@ -410,20 +364,8 @@
             <div class="filtros">
                 <div class="form-group"><label>CC</label><select id="filtroCC"><option value="">Todos</option></select></div>
                 <div class="form-group"><label>Data</label><input type="date" id="filtroData"></div>
-                <div class="form-group"><label>Tipo</label>
-                    <select id="filtroTipo"><option value="">Todos</option><option value="TAXI">Táxi</option><option value="UBER">Uber</option></select>
-                </div>
-                <div class="form-group"><label>Motivo</label>
-                    <select id="filtroMotivo">
-                        <option value="">Todos</option>
-                        <option value="HORA_EXTRA">Hora Extra</option>
-                        <option value="SAIDA_FRETADO">Saída Após Fretado</option>
-                        <option value="ATRASO">Atraso</option>
-                        <option value="REUNIAO">Reunião</option>
-                        <option value="TREINAMENTO">Treinamento</option>
-                        <option value="OUTROS">Outros</option>
-                    </select>
-                </div>
+                <div class="form-group"><label>Tipo</label><select id="filtroTipo"><option value="">Todos</option><option value="TAXI">Táxi</option><option value="UBER">Uber</option></select></div>
+                <div class="form-group"><label>Motivo</label><select id="filtroMotivo"><option value="">Todos</option><option value="HORA_EXTRA">Hora Extra</option><option value="SAIDA_FRETADO">Saída Após Fretado</option><option value="ATRASO">Atraso</option><option value="REUNIAO">Reunião</option><option value="TREINAMENTO">Treinamento</option><option value="OUTROS">Outros</option></select></div>
                 <div class="form-group">
                     <button class="btn btn-primary" onclick="carregarHistorico()">🔍 Filtrar</button>
                     <button class="btn btn-outline" onclick="limparFiltrosHistorico()">Limpar</button>
@@ -468,9 +410,9 @@
 
     <script>
         // ============================================================
-        // 🔧 CONFIGURAÇÃO
+        // 🔧 CONFIGURAÇÃO - URL DO BACKEND
         // ============================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqOCWB1mzEw8kAdrtvUcwTF9wLfwGemeZu4ZA6i9TdwggzYJznT7feutGzYwpPDXPR/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgxcLhlD2WZ3_kBkwko5v-G_S2y_P93LiwJI_KpIwWtrN7MfkGe7YZBXrsLTwn3yHB/exec';
 
         // ============================================================
         // 1. CENTROS DE CUSTO
@@ -537,14 +479,11 @@
             'OUTROS': '📝 Outros'
         };
 
-        // ============================================================
-        // 2. VARIÁVEIS GLOBAIS
-        // ============================================================
         let dadosCache = [];
         let statusEnvio = 'pendente';
 
         // ============================================================
-        // 3. INICIALIZAÇÃO
+        // 2. INICIALIZAÇÃO
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
@@ -552,23 +491,15 @@
             document.getElementById('mesAtual').textContent = mes.charAt(0).toUpperCase() + mes.slice(1);
             document.getElementById('mesRateio').textContent = mes.charAt(0).toUpperCase() + mes.slice(1);
 
-            // Data/Hora atual
             atualizarDataHora();
             document.getElementById('filtroData').value = now.toISOString().slice(0, 10);
 
-            // Preenche filtro de CC
             preencherFiltroCC();
-
-            // Configura autocomplete
             configurarAutocomplete();
-
-            // Configura motivo
             configurarMotivo();
 
-            // Carrega dados
             carregarTodosDados();
 
-            // Atualiza hora a cada 60s
             setInterval(atualizarDataHora, 60000);
 
             console.log('✅ Sistema iniciado!');
@@ -576,7 +507,7 @@
         });
 
         // ============================================================
-        // 4. DATA/HORA ATUAL
+        // 3. DATA/HORA ATUAL
         // ============================================================
         function atualizarDataHora() {
             const now = new Date();
@@ -589,7 +520,7 @@
         }
 
         // ============================================================
-        // 5. PREENCHER FILTRO CC
+        // 4. PREENCHER FILTRO CC
         // ============================================================
         function preencherFiltroCC() {
             const select = document.getElementById('filtroCC');
@@ -604,7 +535,7 @@
         }
 
         // ============================================================
-        // 6. AUTOCOMPLETE
+        // 5. AUTOCOMPLETE
         // ============================================================
         function configurarAutocomplete() {
             const buscaInput = document.getElementById('buscaCC');
@@ -655,7 +586,8 @@
             buscaInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     const primeiro = sugestoesDiv.querySelector('.item');
-                    if (primeiro) { primeiro.click(); e.preventDefault(); }
+                    if (primeiro) { primeiro.click();
+                        e.preventDefault(); }
                 }
             });
 
@@ -669,7 +601,7 @@
         }
 
         // ============================================================
-        // 7. CONFIGURAR MOTIVO
+        // 6. CONFIGURAR MOTIVO
         // ============================================================
         function configurarMotivo() {
             const select = document.getElementById('motivo');
@@ -690,7 +622,7 @@
         }
 
         // ============================================================
-        // 8. TABS
+        // 7. TABS
         // ============================================================
         function abrirTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -703,6 +635,44 @@
             });
             if (tabId === 'rateio') calcularRateio();
             if (tabId === 'dashboard') carregarDashboard();
+        }
+
+        // ============================================================
+        // 8. FUNÇÃO PARA CHAMAR O APPS SCRIPT (SEM CORS)
+        // ============================================================
+        function chamarAppsScript(dados, callback) {
+            // 🔥 Tenta via POST
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(dados)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.text();
+            })
+            .then(data => {
+                callback(null, data);
+            })
+            .catch(error => {
+                console.warn('⚠️ Erro no POST, tentando GET:', error);
+                // 🔥 Fallback: Tenta via GET
+                const url = SCRIPT_URL + '?' + new URLSearchParams(dados).toString();
+                fetch(url, {
+                    method: 'GET',
+                })
+                .then(response => response.text())
+                .then(data => {
+                    callback(null, data);
+                })
+                .catch(err => {
+                    callback(err, null);
+                });
+            });
         }
 
         // ============================================================
@@ -769,43 +739,37 @@
             btn.disabled = true;
             btn.textContent = '⏳ Registrando...';
 
-            // 🔥 ENVIA PARA A PLANILHA
-            fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(dados)
-                })
-                .then(() => {
-                    mostrarMensagem('msgRegistro',
-                        `✅ Corrida registrada!<br><strong>CC:</strong> ${ccCodigo}<br><strong>Motivo:</strong> ${dados.motivo}`,
-                        'sucesso'
-                    );
-
-                    // Limpa formulário
-                    document.getElementById('formRegistro').reset();
-                    document.getElementById('centroCusto').value = '';
-                    document.getElementById('buscaCC').value = '';
-                    document.getElementById('buscaCC').classList.remove('valid', 'invalid');
-                    document.getElementById('grupoOutroMotivo').style.display = 'none';
-                    document.getElementById('outroMotivo').required = false;
-                    atualizarDataHora();
-
-                    statusEnvio = 'pendente';
-                    document.getElementById('statusResumo').innerHTML =
-                        `<span class="status-envio"><span class="dot yellow"></span> Pendente</span>`;
-
-                    carregarTodosDados();
-
-                    btn.disabled = false;
-                    btn.textContent = '💾 Registrar';
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
+            chamarAppsScript(dados, function(err, resultado) {
+                if (err) {
+                    console.error('Erro:', err);
                     mostrarMensagem('msgRegistro', '❌ Erro ao registrar. Tente novamente.', 'erro');
                     btn.disabled = false;
                     btn.textContent = '💾 Registrar';
-                });
+                    return;
+                }
+
+                mostrarMensagem('msgRegistro',
+                    `✅ Corrida registrada!<br><strong>CC:</strong> ${ccCodigo}<br><strong>Motivo:</strong> ${dados.motivo}`,
+                    'sucesso'
+                );
+
+                document.getElementById('formRegistro').reset();
+                document.getElementById('centroCusto').value = '';
+                document.getElementById('buscaCC').value = '';
+                document.getElementById('buscaCC').classList.remove('valid', 'invalid');
+                document.getElementById('grupoOutroMotivo').style.display = 'none';
+                document.getElementById('outroMotivo').required = false;
+                atualizarDataHora();
+
+                statusEnvio = 'pendente';
+                document.getElementById('statusResumo').innerHTML =
+                    `<span class="status-envio"><span class="dot yellow"></span> Pendente</span>`;
+
+                carregarTodosDados();
+
+                btn.disabled = false;
+                btn.textContent = '💾 Registrar';
+            });
         });
 
         function limparFormulario() {
@@ -826,40 +790,9 @@
             const tbody = document.getElementById('tabelaHistorico');
             tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#666;">⏳ Carregando...</td></tr>';
 
-            // 🔥 TENTA BUSCAR DA PLANILHA
-            fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ acao: 'listar' })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.text();
-                })
-                .then(data => {
-                    try {
-                        const dados = JSON.parse(data);
-                        if (Array.isArray(dados) && dados.length > 0) {
-                            dadosCache = dados;
-                            document.getElementById('erroConexao').style.display = 'none';
-                            exibirHistorico(dados);
-                            atualizarResumo(dados);
-                            return;
-                        }
-                        throw new Error('Dados vazios');
-                    } catch (e) {
-                        console.warn('⚠️ Usando cache:', e);
-                        if (dadosCache.length > 0) {
-                            exibirHistorico(dadosCache);
-                            atualizarResumo(dadosCache);
-                        } else {
-                            tbody.innerHTML =
-                                `<tr><td colspan="8" class="empty-state"><div class="icon">📭</div>Nenhuma corrida encontrada.</td></tr>`;
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.warn('⚠️ Erro de conexão:', error);
+            chamarAppsScript({ acao: 'listar' }, function(err, data) {
+                if (err) {
+                    console.warn('⚠️ Erro ao carregar histórico:', err);
                     document.getElementById('erroConexao').style.display = 'block';
                     if (dadosCache.length > 0) {
                         exibirHistorico(dadosCache);
@@ -868,7 +801,28 @@
                         tbody.innerHTML =
                             `<tr><td colspan="8" class="empty-state"><div class="icon">⚠️</div>Erro de conexão. Clique em "Recarregar".</td></tr>`;
                     }
-                });
+                    return;
+                }
+
+                try {
+                    const dados = JSON.parse(data);
+                    if (Array.isArray(dados) && dados.length > 0) {
+                        dadosCache = dados;
+                        document.getElementById('erroConexao').style.display = 'none';
+                        exibirHistorico(dados);
+                        atualizarResumo(dados);
+                    } else {
+                        tbody.innerHTML =
+                            `<tr><td colspan="8" class="empty-state"><div class="icon">📭</div>Nenhuma corrida encontrada.</td></tr>`;
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Erro ao processar dados:', e);
+                    if (dadosCache.length > 0) {
+                        exibirHistorico(dadosCache);
+                        atualizarResumo(dadosCache);
+                    }
+                }
+            });
         }
 
         function exibirHistorico(dados) {
@@ -938,7 +892,8 @@
 
             let ccCount = {};
             hojeDados.forEach(d => { ccCount[d.CC] = (ccCount[d.CC] || 0) + 1; });
-            let topCC = '-', max = 0;
+            let topCC = '-',
+                max = 0;
             for (let cc in ccCount) {
                 if (ccCount[cc] > max) { max = ccCount[cc];
                     topCC = cc + ' - ' + (CENTROS_CUSTO[cc]?.nome || cc); }
@@ -1023,17 +978,12 @@
             if (dadosCache.length > 0) {
                 processar(dadosCache);
             } else {
-                fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ acao: 'listar' })
-                    })
-                    .then(r => r.text())
-                    .then(data => {
+                chamarAppsScript({ acao: 'listar' }, function(err, data) {
+                    if (!err && data) {
                         try { dadosCache = JSON.parse(data); } catch (e) {}
-                        processar(dadosCache);
-                    })
-                    .catch(() => processar(dadosCache));
+                    }
+                    processar(dadosCache);
+                });
             }
         }
 
@@ -1060,7 +1010,9 @@
                     return;
                 }
 
-                let ccCount = {}, tipoCount = { TAXI: 0, UBER: 0 }, motivoCount = {};
+                let ccCount = {},
+                    tipoCount = { TAXI: 0, UBER: 0 },
+                    motivoCount = {};
                 mesDados.forEach(d => {
                     ccCount[d.CC] = (ccCount[d.CC] || 0) + 1;
                     tipoCount[d.Tipo] = (tipoCount[d.Tipo] || 0) + 1;
@@ -1117,17 +1069,12 @@
             if (dadosCache.length > 0) {
                 processar(dadosCache);
             } else {
-                fetch(SCRIPT_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({ acao: 'listar' })
-                    })
-                    .then(r => r.text())
-                    .then(data => {
+                chamarAppsScript({ acao: 'listar' }, function(err, data) {
+                    if (!err && data) {
                         try { dadosCache = JSON.parse(data); } catch (e) {}
-                        processar(dadosCache);
-                    })
-                    .catch(() => processar(dadosCache));
+                    }
+                    processar(dadosCache);
+                });
             }
         }
 
@@ -1139,25 +1086,22 @@
             btn.disabled = true;
             btn.textContent = '⏳ Enviando...';
 
-            fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ acao: 'resumo' })
-                })
-                .then(() => {
-                    statusEnvio = 'enviado';
-                    document.getElementById('statusResumo').innerHTML =
-                        `<span class="status-envio"><span class="dot green"></span> Enviado hoje</span>`;
-                    mostrarMensagem('msgRegistro', '✅ Resumo enviado para Facilities!', 'sucesso');
-                    btn.disabled = false;
-                    btn.textContent = '📧 Enviar Resumo';
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
+            chamarAppsScript({ acao: 'resumo' }, function(err, resultado) {
+                if (err) {
+                    console.error('Erro:', err);
                     mostrarMensagem('msgRegistro', '❌ Erro ao enviar resumo.', 'erro');
                     btn.disabled = false;
                     btn.textContent = '📧 Enviar Resumo';
-                });
+                    return;
+                }
+
+                statusEnvio = 'enviado';
+                document.getElementById('statusResumo').innerHTML =
+                    `<span class="status-envio"><span class="dot green"></span> Enviado hoje</span>`;
+                mostrarMensagem('msgRegistro', '✅ Resumo enviado para Facilities!', 'sucesso');
+                btn.disabled = false;
+                btn.textContent = '📧 Enviar Resumo';
+            });
         }
 
         // ============================================================
@@ -1165,22 +1109,20 @@
         // ============================================================
         function excluirCorrida(id) {
             if (!confirm('Excluir esta corrida?')) return;
-            fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ acao: 'excluir', id: id })
-                })
-                .then(() => {
-                    statusEnvio = 'pendente';
-                    document.getElementById('statusResumo').innerHTML =
-                        `<span class="status-envio"><span class="dot yellow"></span> Pendente</span>`;
-                    carregarTodosDados();
-                    mostrarMensagem('msgRegistro', '🗑️ Corrida excluída!', 'sucesso');
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
+
+            chamarAppsScript({ acao: 'excluir', id: id }, function(err, resultado) {
+                if (err) {
+                    console.error('Erro:', err);
                     mostrarMensagem('msgRegistro', '❌ Erro ao excluir.', 'erro');
-                });
+                    return;
+                }
+
+                statusEnvio = 'pendente';
+                document.getElementById('statusResumo').innerHTML =
+                    `<span class="status-envio"><span class="dot yellow"></span> Pendente</span>`;
+                carregarTodosDados();
+                mostrarMensagem('msgRegistro', '🗑️ Corrida excluída!', 'sucesso');
+            });
         }
 
         // ============================================================
@@ -1238,22 +1180,18 @@
                 return;
             }
 
-            fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        acao: 'rateio',
-                        valorFatura: valorFatura.toString(),
-                        mes: mesAtual
-                    })
-                })
-                .then(() => {
-                    mostrarMensagem('msgRegistro', '✅ Rateio enviado para Financeiro e Gestor!', 'sucesso');
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
+            chamarAppsScript({
+                acao: 'rateio',
+                valorFatura: valorFatura.toString(),
+                mes: mesAtual
+            }, function(err, resultado) {
+                if (err) {
+                    console.error('Erro:', err);
                     mostrarMensagem('msgRegistro', '❌ Erro ao enviar rateio.', 'erro');
-                });
+                    return;
+                }
+                mostrarMensagem('msgRegistro', '✅ Rateio enviado para Financeiro e Gestor!', 'sucesso');
+            });
         }
 
         // ============================================================
