@@ -650,25 +650,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================
-// COMUNICAÇÃO COM APPS SCRIPT — fetch POST com JSON
+// COMUNICAÇÃO COM APPS SCRIPT
+// Toda comunicação via GET com parâmetros de URL.
+// Apps Script responde GET com CORS automático — sem no-cors.
+// Leitura (ping, listar): GET direto.
+// Gravação (registrar, excluir, resumo, rateio): GET com acao=X
+// Isso evita preflight OPTIONS e CORS manual no script.
 // ============================================================
-async function chamarScript(payload) {
-  const res = await fetch(SCRIPT_URL, {
-    method : 'POST',
-    mode   : 'no-cors',         // Apps Script não suporta CORS real
-    headers: { 'Content-Type': 'text/plain' },
-    body   : JSON.stringify(payload)
-  });
-  // no-cors retorna opaque response — sem acesso ao body
-  // Para leitura de dados (listar), usamos fetch via GET + parâmetros
-  return res;
+async function chamarScript(params) {
+  params._ = Date.now(); // cache-bust
+  const qs  = new URLSearchParams(params).toString();
+  const url = SCRIPT_URL + '?' + qs;
+  const res = await fetch(url); // GET simples — CORS automático
+  return res.text();
 }
 
+// Alias mantido para compatibilidade interna
 async function chamarScriptGET(params) {
-  const qs  = new URLSearchParams(params).toString();
-  const url = SCRIPT_URL + '?' + qs + '&_=' + Date.now();
-  const res = await fetch(url, { mode: 'cors' });
-  return res.text();
+  return chamarScript(params);
 }
 
 // ── PING DE CONEXÃO ─────────────────────────────────────────
@@ -738,13 +737,18 @@ document.getElementById('formRegistro').addEventListener('submit', async functio
   };
 
   try {
-    // Com mode:no-cors não lemos a resposta — confiamos no envio
-    await chamarScript(payload);
-    toast('Corrida registrada com sucesso.', 'ok');
-    limparForm();
-    setTimeout(() => carregarMes(mesAtivo), 2000); // aguarda o Sheets processar
+    const txt = await chamarScript(payload);
+    if (txt.startsWith('DUPLICATA')) {
+      toast('Corrida duplicada — mesmo registro nos últimos 5 minutos.', 'warn');
+    } else if (txt.startsWith('OK')) {
+      toast('Corrida registrada com sucesso.', 'ok');
+      limparForm();
+      setTimeout(() => carregarMes(mesAtivo), 2500);
+    } else {
+      toast('Erro ao registrar: ' + txt, 'err');
+    }
   } catch(err) {
-    toast('Erro ao registrar: ' + err.message, 'err');
+    toast('Erro de conexão: ' + err.message, 'err');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Registrar corrida';
@@ -839,11 +843,15 @@ function limparFiltros() {
 async function excluirCorrida(id) {
   if (!confirm('Excluir a corrida #' + id + '? Esta ação será registrada no log.')) return;
   try {
-    await chamarScript({ acao: 'excluir', id, operador: 'portaria' });
-    toast('Corrida #' + id + ' excluída.', 'warn');
-    setTimeout(() => carregarHistorico(), 2000);
+    const txt = await chamarScript({ acao: 'excluir', id, operador: 'portaria' });
+    if (txt.startsWith('OK')) {
+      toast('Corrida #' + id + ' excluída.', 'warn');
+      setTimeout(() => carregarHistorico(), 2500);
+    } else {
+      toast('Erro ao excluir: ' + txt, 'err');
+    }
   } catch(err) {
-    toast('Erro ao excluir: ' + err.message, 'err');
+    toast('Erro de conexão: ' + err.message, 'err');
   }
 }
 
@@ -939,10 +947,14 @@ async function enviarRateio() {
   btn.textContent = 'Enviando…';
 
   try {
-    await chamarScript({ acao: 'rateio', valorFatura: String(valorFatura), mes });
-    toast('Rateio enviado para Financeiro e Gestor.', 'ok');
+    const txt = await chamarScript({ acao: 'rateio', valorFatura: String(valorFatura), mes });
+    if (txt.startsWith('OK')) {
+      toast('Rateio enviado para Financeiro e Gestor.', 'ok');
+    } else {
+      toast('Erro ao enviar rateio: ' + txt, 'err');
+    }
   } catch(err) {
-    toast('Erro ao enviar: ' + err.message, 'err');
+    toast('Erro de conexão: ' + err.message, 'err');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Enviar por e-mail';
@@ -957,10 +969,14 @@ async function enviarResumoDiario() {
   btn.disabled = true;
   btn.textContent = 'Enviando…';
   try {
-    await chamarScript({ acao: 'resumo' });
-    toast('Resumo enviado para Facilities.', 'ok');
+    const txt = await chamarScript({ acao: 'resumo' });
+    if (txt.startsWith('OK')) {
+      toast('Resumo enviado para Facilities.', 'ok');
+    } else {
+      toast('Erro ao enviar resumo: ' + txt, 'err');
+    }
   } catch(err) {
-    toast('Erro: ' + err.message, 'err');
+    toast('Erro de conexão: ' + err.message, 'err');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Resumo por e-mail';
