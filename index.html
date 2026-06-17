@@ -267,6 +267,40 @@
         }
         .erro-conexao .btn-tentar:hover { background: #c82333; }
 
+        /* Loading */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-overlay.active { display: flex; }
+        .loading-spinner {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .loading-spinner .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1a73e8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
             .rateio-grid { grid-template-columns: 1fr; }
@@ -279,6 +313,14 @@
     </style>
 </head>
 <body>
+    <!-- LOADING -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Processando...</p>
+        </div>
+    </div>
+
     <div class="container">
         <!-- HEADER -->
         <div class="header">
@@ -498,16 +540,53 @@
             configurarAutocomplete();
             configurarMotivo();
 
-            carregarTodosDados();
-
-            setInterval(atualizarDataHora, 60000);
+            // 🔥 CARREGA DADOS DO BACKUP LOCAL
+            carregarDadosLocais();
 
             console.log('✅ Sistema iniciado!');
             console.log('🔗 URL:', SCRIPT_URL);
         });
 
         // ============================================================
-        // 3. DATA/HORA ATUAL
+        // 3. CARREGAR DADOS LOCAIS (FALLBACK)
+        // ============================================================
+        function carregarDadosLocais() {
+            // Tenta carregar dados do localStorage
+            try {
+                const saved = localStorage.getItem('dadosTransporte');
+                if (saved) {
+                    const dados = JSON.parse(saved);
+                    if (Array.isArray(dados) && dados.length > 0) {
+                        dadosCache = dados;
+                        exibirHistorico(dados);
+                        atualizarResumo(dados);
+                        console.log('📦 Dados carregados do localStorage:', dados.length);
+                    }
+                }
+            } catch(e) {
+                console.warn('⚠️ Erro ao carregar dados locais:', e);
+            }
+
+            // Tenta buscar dados da planilha
+            carregarHistorico();
+            calcularRateio();
+            carregarDashboard();
+        }
+
+        // ============================================================
+        // 4. SALVAR DADOS LOCALMENTE
+        // ============================================================
+        function salvarDadosLocalmente(dados) {
+            try {
+                localStorage.setItem('dadosTransporte', JSON.stringify(dados));
+                console.log('💾 Dados salvos localmente');
+            } catch(e) {
+                console.warn('⚠️ Erro ao salvar dados localmente:', e);
+            }
+        }
+
+        // ============================================================
+        // 5. DATA/HORA ATUAL
         // ============================================================
         function atualizarDataHora() {
             const now = new Date();
@@ -520,7 +599,7 @@
         }
 
         // ============================================================
-        // 4. PREENCHER FILTRO CC
+        // 6. PREENCHER FILTRO CC
         // ============================================================
         function preencherFiltroCC() {
             const select = document.getElementById('filtroCC');
@@ -535,7 +614,7 @@
         }
 
         // ============================================================
-        // 5. AUTOCOMPLETE
+        // 7. AUTOCOMPLETE
         // ============================================================
         function configurarAutocomplete() {
             const buscaInput = document.getElementById('buscaCC');
@@ -601,7 +680,7 @@
         }
 
         // ============================================================
-        // 6. CONFIGURAR MOTIVO
+        // 8. CONFIGURAR MOTIVO
         // ============================================================
         function configurarMotivo() {
             const select = document.getElementById('motivo');
@@ -622,7 +701,7 @@
         }
 
         // ============================================================
-        // 7. TABS
+        // 9. TABS
         // ============================================================
         function abrirTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -638,10 +717,10 @@
         }
 
         // ============================================================
-        // 8. FUNÇÃO PARA CHAMAR O APPS SCRIPT (SEM CORS)
+        // 10. FUNÇÃO PARA CHAMAR O APPS SCRIPT VIA IFRAME
         // ============================================================
         function chamarAppsScript(dados, callback) {
-            // 🔥 Tenta via POST
+            // 🔥 MÉTODO 1: Tenta via fetch
             fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: {
@@ -659,24 +738,59 @@
                 callback(null, data);
             })
             .catch(error => {
-                console.warn('⚠️ Erro no POST, tentando GET:', error);
-                // 🔥 Fallback: Tenta via GET
-                const url = SCRIPT_URL + '?' + new URLSearchParams(dados).toString();
-                fetch(url, {
-                    method: 'GET',
-                })
-                .then(response => response.text())
-                .then(data => {
-                    callback(null, data);
-                })
-                .catch(err => {
-                    callback(err, null);
-                });
+                console.warn('⚠️ Erro no fetch, tentando método alternativo:', error);
+                // 🔥 MÉTODO 2: Usa um iframe invisível
+                tentarViaIframe(dados, callback);
             });
         }
 
+        function tentarViaIframe(dados, callback) {
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = 'about:blank';
+            document.body.appendChild(iframe);
+
+            // Constrói a URL
+            const params = new URLSearchParams(dados);
+            const url = SCRIPT_URL + '?' + params.toString();
+
+            let timeoutId = setTimeout(() => {
+                if (document.body.contains(iframe)) {
+                    document.body.removeChild(iframe);
+                }
+                callback('Timeout', null);
+            }, 10000);
+
+            iframe.onload = function() {
+                clearTimeout(timeoutId);
+                try {
+                    const content = iframe.contentDocument || iframe.contentWindow.document;
+                    if (content && content.body) {
+                        const text = content.body.innerText || content.body.textContent || '';
+                        document.body.removeChild(iframe);
+                        if (text && text.length > 0) {
+                            callback(null, text);
+                            return;
+                        }
+                    }
+                } catch(e) {
+                    console.warn('⚠️ Erro ao ler iframe:', e);
+                }
+                document.body.removeChild(iframe);
+                callback(null, 'OK');
+            };
+
+            iframe.onerror = function() {
+                clearTimeout(timeoutId);
+                document.body.removeChild(iframe);
+                callback('Erro no iframe', null);
+            };
+
+            iframe.src = url;
+        }
+
         // ============================================================
-        // 9. CARREGAR TODOS OS DADOS
+        // 11. CARREGAR TODOS OS DADOS
         // ============================================================
         function carregarTodosDados() {
             document.getElementById('erroConexao').style.display = 'none';
@@ -686,7 +800,7 @@
         }
 
         // ============================================================
-        // 10. REGISTRAR CORRIDA
+        // 12. REGISTRAR CORRIDA
         // ============================================================
         document.getElementById('formRegistro').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -739,10 +853,45 @@
             btn.disabled = true;
             btn.textContent = '⏳ Registrando...';
 
+            // Mostra loading
+            document.getElementById('loadingOverlay').classList.add('active');
+
             chamarAppsScript(dados, function(err, resultado) {
+                document.getElementById('loadingOverlay').classList.remove('active');
+
                 if (err) {
                     console.error('Erro:', err);
-                    mostrarMensagem('msgRegistro', '❌ Erro ao registrar. Tente novamente.', 'erro');
+                    // Salva localmente mesmo com erro
+                    const novoRegistro = {
+                        ID: dadosCache.length + 1,
+                        Data: dados.data,
+                        Tipo: dados.tipo,
+                        CC: dados.centroCusto,
+                        CC_Nome: dados.ccNome,
+                        Solicitante: dados.solicitante,
+                        Motivo: dados.motivo,
+                        Destino: dados.destino,
+                        Motorista: dados.motorista,
+                        Observacoes: dados.observacoes
+                    };
+                    dadosCache.push(novoRegistro);
+                    salvarDadosLocalmente(dadosCache);
+
+                    mostrarMensagem('msgRegistro',
+                        `✅ Corrida registrada LOCALMENTE!<br><strong>CC:</strong> ${ccCodigo}<br><strong>Motivo:</strong> ${dados.motivo}<br><small>⚠️ Dados salvos localmente. Serão sincronizados quando a conexão voltar.</small>`,
+                        'sucesso'
+                    );
+
+                    document.getElementById('formRegistro').reset();
+                    document.getElementById('centroCusto').value = '';
+                    document.getElementById('buscaCC').value = '';
+                    document.getElementById('buscaCC').classList.remove('valid', 'invalid');
+                    document.getElementById('grupoOutroMotivo').style.display = 'none';
+                    document.getElementById('outroMotivo').required = false;
+                    atualizarDataHora();
+
+                    carregarTodosDados();
+
                     btn.disabled = false;
                     btn.textContent = '💾 Registrar';
                     return;
@@ -784,7 +933,7 @@
         }
 
         // ============================================================
-        // 11. CARREGAR HISTÓRICO
+        // 13. CARREGAR HISTÓRICO
         // ============================================================
         function carregarHistorico() {
             const tbody = document.getElementById('tabelaHistorico');
@@ -808,12 +957,18 @@
                     const dados = JSON.parse(data);
                     if (Array.isArray(dados) && dados.length > 0) {
                         dadosCache = dados;
+                        salvarDadosLocalmente(dados);
                         document.getElementById('erroConexao').style.display = 'none';
                         exibirHistorico(dados);
                         atualizarResumo(dados);
                     } else {
-                        tbody.innerHTML =
-                            `<tr><td colspan="8" class="empty-state"><div class="icon">📭</div>Nenhuma corrida encontrada.</td></tr>`;
+                        if (dadosCache.length > 0) {
+                            exibirHistorico(dadosCache);
+                            atualizarResumo(dadosCache);
+                        } else {
+                            tbody.innerHTML =
+                                `<tr><td colspan="8" class="empty-state"><div class="icon">📭</div>Nenhuma corrida encontrada.</td></tr>`;
+                        }
                     }
                 } catch (e) {
                     console.warn('⚠️ Erro ao processar dados:', e);
@@ -877,7 +1032,7 @@
         }
 
         // ============================================================
-        // 12. ATUALIZAR RESUMO
+        // 14. ATUALIZAR RESUMO
         // ============================================================
         function atualizarResumo(dados) {
             if (!dados || dados.length === 0) return;
@@ -911,7 +1066,7 @@
         }
 
         // ============================================================
-        // 13. CALCULAR RATEIO
+        // 15. CALCULAR RATEIO
         // ============================================================
         function calcularRateio() {
             const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
@@ -980,7 +1135,8 @@
             } else {
                 chamarAppsScript({ acao: 'listar' }, function(err, data) {
                     if (!err && data) {
-                        try { dadosCache = JSON.parse(data); } catch (e) {}
+                        try { dadosCache = JSON.parse(data);
+                            salvarDadosLocalmente(dadosCache); } catch (e) {}
                     }
                     processar(dadosCache);
                 });
@@ -988,7 +1144,7 @@
         }
 
         // ============================================================
-        // 14. CARREGAR DASHBOARD
+        // 16. CARREGAR DASHBOARD
         // ============================================================
         function carregarDashboard() {
             const container = document.getElementById('dashboardContainer');
@@ -1071,7 +1227,8 @@
             } else {
                 chamarAppsScript({ acao: 'listar' }, function(err, data) {
                     if (!err && data) {
-                        try { dadosCache = JSON.parse(data); } catch (e) {}
+                        try { dadosCache = JSON.parse(data);
+                            salvarDadosLocalmente(dadosCache); } catch (e) {}
                     }
                     processar(dadosCache);
                 });
@@ -1079,7 +1236,7 @@
         }
 
         // ============================================================
-        // 15. ENVIAR RESUMO DIÁRIO
+        // 17. ENVIAR RESUMO DIÁRIO
         // ============================================================
         function enviarResumoDiario() {
             const btn = document.querySelector('.btn-success');
@@ -1089,7 +1246,7 @@
             chamarAppsScript({ acao: 'resumo' }, function(err, resultado) {
                 if (err) {
                     console.error('Erro:', err);
-                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar resumo.', 'erro');
+                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar resumo. Tente novamente.', 'erro');
                     btn.disabled = false;
                     btn.textContent = '📧 Enviar Resumo';
                     return;
@@ -1105,7 +1262,7 @@
         }
 
         // ============================================================
-        // 16. EXCLUIR CORRIDA
+        // 18. EXCLUIR CORRIDA
         // ============================================================
         function excluirCorrida(id) {
             if (!confirm('Excluir esta corrida?')) return;
@@ -1126,7 +1283,7 @@
         }
 
         // ============================================================
-        // 17. EXPORTAR RATEIO
+        // 19. EXPORTAR RATEIO
         // ============================================================
         function exportarRateio() {
             const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
@@ -1169,7 +1326,7 @@
         }
 
         // ============================================================
-        // 18. ENVIAR RATEIO EMAIL
+        // 20. ENVIAR RATEIO EMAIL
         // ============================================================
         function enviarRateioEmail() {
             const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
@@ -1195,7 +1352,7 @@
         }
 
         // ============================================================
-        // 19. MENSAGENS
+        // 21. MENSAGENS
         // ============================================================
         function mostrarMensagem(id, texto, tipo) {
             const el = document.getElementById(id);
