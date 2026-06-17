@@ -426,8 +426,23 @@ tr:hover td { background: var(--bg-surface); }
         </div>
 
         <div class="form-group">
-          <label>Destino</label>
-          <input type="text" id="destino" placeholder="Ex: Aeroporto Confins">
+          <label>Origem <span class="req">*</span></label>
+          <input type="text" id="origem" placeholder="Ex: Portaria Vespasiano" required>
+        </div>
+
+        <div class="form-group">
+          <label>Horário de saída <span class="req">*</span></label>
+          <input type="time" id="horarioSaida" required>
+        </div>
+
+        <div class="form-group">
+          <label>Destino <span class="req">*</span></label>
+          <input type="text" id="destino" placeholder="Ex: Aeroporto Confins" required>
+        </div>
+
+        <div class="form-group">
+          <label>Horário de chegada prevista</label>
+          <input type="time" id="horarioChegada">
         </div>
 
         <div class="form-group">
@@ -723,17 +738,20 @@ document.getElementById('formRegistro').addEventListener('submit', async functio
   btn.innerHTML = '<span class="spinner"></span> Registrando…';
 
   const payload = {
-    acao        : 'registrar',
-    data        : document.getElementById('dataCorrida').value,
-    tipo        : document.getElementById('tipoTransporte').value,
-    centroCusto : cc,
-    ccNome      : CC[cc]?.nome || cc,
-    solicitante : document.getElementById('solicitante').value.trim(),
-    motivo      : motivoFinal,
-    destino     : document.getElementById('destino').value.trim(),
-    motorista   : document.getElementById('motorista').value.trim(),
-    observacoes : document.getElementById('observacoes').value.trim(),
-    operador    : 'portaria'
+    acao          : 'registrar',
+    data          : document.getElementById('dataCorrida').value,
+    tipo          : document.getElementById('tipoTransporte').value,
+    centroCusto   : cc,
+    ccNome        : CC[cc]?.nome || cc,
+    solicitante   : document.getElementById('solicitante').value.trim(),
+    motivo        : motivoFinal,
+    origem        : document.getElementById('origem').value.trim(),
+    horarioSaida  : document.getElementById('horarioSaida').value,
+    destino       : document.getElementById('destino').value.trim(),
+    horarioChegada: document.getElementById('horarioChegada').value,
+    motorista     : document.getElementById('motorista').value.trim(),
+    observacoes   : document.getElementById('observacoes').value.trim(),
+    operador      : 'portaria'
   };
 
   try {
@@ -1167,6 +1185,8 @@ function limparForm() {
   document.getElementById('buscaCC').value = '';
   document.getElementById('grupoOutro').style.display = 'none';
   document.getElementById('outroMotivo').required = false;
+  document.getElementById('horarioSaida').value = '';
+  document.getElementById('horarioChegada').value = '';
   setDataHoraAtual();
 }
 
