@@ -995,11 +995,11 @@ function exportarCSV() {
   });
 
   const total  = dados.length;
-  let csv = 'CC,Nome,Corridas,Percentual,Valor\n';
+  let csv = 'Valor (R$),CC,Nome,Corridas,Percentual\n';
   Object.entries(ccCount).forEach(([cc, info]) => {
     const pct   = (info.qtd / total) * 100;
     const valor = (pct / 100) * valorFatura;
-    csv += `${cc},"${info.nome}",${info.qtd},${pct.toFixed(1)}%,R$ ${valor.toFixed(2)}\n`;
+    csv += `R$ ${valor.toFixed(2)},${cc},"${info.nome}",${info.qtd},${pct.toFixed(1)}%\n`;
   });
 
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
