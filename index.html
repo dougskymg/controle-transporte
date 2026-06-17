@@ -1,1376 +1,1168 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚗 Controle de Transporte - Portaria</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Transporte — Delp Engenharia</title>
+<style>
+/* ── RESET & BASE ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .header {
-            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
-            color: white;
-            padding: 20px 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .header h1 { font-size: 24px; display: flex; align-items: center; gap: 10px; }
-        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .btn {
-            padding: 8px 18px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 13px;
-        }
-        .btn-success { background: #28a745; color: white; }
-        .btn-success:hover { background: #218838; }
-        .btn-warning { background: #fd7e14; color: white; }
-        .btn-warning:hover { background: #e66a0a; }
-        .btn-primary { background: #1a73e8; color: white; }
-        .btn-primary:hover { background: #1557b0; }
-        .btn-danger { background: #dc3545; color: white; padding: 4px 10px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; }
-        .btn-danger:hover { background: #c82333; }
-        .btn-outline { background: transparent; border: 2px solid white; color: white; }
-        .btn-outline:hover { background: white; color: #1a73e8; }
+:root {
+  --delp-red   : #CC0F10;
+  --delp-red-d : #A30C0D;
+  --bg-page    : #EAE5DF;
+  --bg-card    : #FFFFFF;
+  --bg-surface : #F4F1ED;
+  --text-main  : #1A1A1A;
+  --text-muted : #6B6460;
+  --text-light : #9C9590;
+  --border     : #D8D2CC;
+  --border-focus:#CC0F10;
+  --green      : #0B861D;
+  --amber      : #C87000;
+  --blue       : #2362D3;
+  --radius-sm  : 6px;
+  --radius-md  : 10px;
+  --radius-lg  : 14px;
+  --shadow-sm  : 0 1px 4px rgba(0,0,0,.06);
+  --shadow-md  : 0 2px 12px rgba(0,0,0,.09);
+}
 
-        .info-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+body {
+  font-family: 'Barlow', 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  background: var(--bg-page);
+  color: var(--text-main);
+  min-height: 100vh;
+}
 
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .card {
-            background: white;
-            padding: 15px 18px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .card .label { color: #666; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-        .card .valor { font-size: 24px; font-weight: bold; color: #1a73e8; margin-top: 2px; }
-        .card .valor.green { color: #28a745; }
-        .card .valor.orange { color: #fd7e14; }
-        .card .valor.purple { color: #6f42c1; }
+/* ── LAYOUT ───────────────────────────────────────────── */
+.shell { max-width: 1100px; margin: 0 auto; padding: 0 16px 48px; }
 
-        .tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 20px;
-            background: white;
-            padding: 5px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            overflow-x: auto;
-        }
-        .tab {
-            padding: 10px 20px;
-            border: none;
-            background: transparent;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #666;
-            transition: all 0.3s;
-            white-space: nowrap;
-            font-size: 14px;
-        }
-        .tab.active { background: #1a73e8; color: white; }
-        .tab:hover:not(.active) { background: #e8f0fe; }
+/* ── HEADER ───────────────────────────────────────────── */
+.header {
+  background: var(--delp-red);
+  color: #fff;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+.header-brand .sep { opacity: .4; }
+.header-brand .sub { font-weight: 400; opacity: .85; font-size: 13px; }
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  opacity: .9;
+}
+.ping-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #fff; opacity: .4;
+  transition: opacity .4s, background .4s;
+}
+.ping-dot.ok  { background: #4ade80; opacity: 1; }
+.ping-dot.err { background: #fca5a5; opacity: 1; }
 
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .tab-content.active { display: block; }
+/* ── CARDS MÉTRICA ────────────────────────────────────── */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 20px 0 16px;
+}
+.metric {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+.metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--text-light); }
+.metric-value { font-size: 26px; font-weight: 700; color: var(--text-main); line-height: 1.1; margin-top: 2px; }
+.metric-value.red   { color: var(--delp-red); }
+.metric-value.green { color: var(--green); }
+.metric-value.blue  { color: var(--blue); }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
-        }
-        .form-group { margin-bottom: 5px; position: relative; }
-        .form-group.full { grid-column: 1 / -1; }
-        .form-group.half { grid-column: span 2; }
-        label { display: block; font-weight: 600; color: #333; font-size: 13px; margin-bottom: 4px; }
-        label .required { color: #dc3545; }
-        input, select, textarea {
-            width: 100%;
-            padding: 9px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            font-family: inherit;
-        }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: #1a73e8; }
+/* ── TABS ─────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+.tab {
+  padding: 8px 20px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+.tab:hover { background: var(--bg-surface); }
+.tab.active { background: var(--delp-red); color: #fff; }
 
-        .btn-submit {
-            padding: 10px 25px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 15px;
-            background: #1a73e8;
-            color: white;
-        }
-        .btn-submit:hover { background: #1557b0; }
-        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+/* ── PAINEL ───────────────────────────────────────────── */
+.panel {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.panel.active { display: block; }
+.panel-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
 
-        .sugestoes {
-            position: absolute;
-            background: white;
-            border: 2px solid #1a73e8;
-            border-radius: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1000;
-            width: 100%;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-            top: 100%;
-            left: 0;
-            margin-top: 2px;
-        }
-        .sugestoes .item { padding: 8px 14px; cursor: pointer; border-bottom: 1px solid #f0f0f0; }
-        .sugestoes .item:hover { background: #e8f0fe; }
-        .sugestoes .item .codigo { font-weight: bold; color: #1a73e8; font-size: 13px; }
-        .sugestoes .item .nome { color: #333; margin-left: 8px; font-size: 13px; }
-        .sugestoes .item .grupo { font-size: 11px; color: #888; display: block; margin-top: 2px; }
+/* ── FORMULÁRIO ───────────────────────────────────────── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.form-group label .req { color: var(--delp-red); }
 
-        .table-responsive { overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background: #f8f9fa; padding: 10px; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #dee2e6; white-space: nowrap; }
-        td { padding: 8px 10px; border-bottom: 1px solid #e9ecef; }
-        tr:hover { background: #f8f9fa; }
+input, select, textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-main);
+  background: var(--bg-card);
+  transition: border-color .15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+textarea { resize: vertical; min-height: 60px; }
 
-        .badge {
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        .badge-taxi { background: #fff3cd; color: #856404; }
-        .badge-uber { background: #cce5ff; color: #004085; }
-        .badge-motivo { background: #e8f0fe; color: #1a73e8; font-size: 11px; padding: 2px 10px; border-radius: 12px; }
+/* ── AUTOCOMPLETE ─────────────────────────────────────── */
+.ac-wrap { position: relative; }
+.ac-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--bg-card);
+  border: 1.5px solid var(--delp-red);
+  border-radius: var(--radius-sm);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: var(--shadow-md);
+  display: none;
+}
+.ac-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.ac-item:last-child { border-bottom: none; }
+.ac-item:hover { background: var(--bg-surface); }
+.ac-item .cc-code { font-weight: 600; color: var(--delp-red); }
+.ac-item .cc-name { color: var(--text-main); margin-left: 6px; }
+.ac-item .cc-group { font-size: 11px; color: var(--text-light); display: block; margin-top: 1px; }
 
-        .filtros {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            align-items: end;
-        }
-        .filtros .form-group { margin-bottom: 0; flex: 1; min-width: 130px; }
-        .filtros .form-group label { font-size: 11px; }
+/* ── BOTÕES ───────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+}
+.btn-primary   { background: var(--delp-red); color: #fff; }
+.btn-primary:hover  { background: var(--delp-red-d); }
+.btn-secondary { background: transparent; border-color: var(--border); color: var(--text-muted); }
+.btn-secondary:hover { background: var(--bg-surface); }
+.btn-icon { padding: 6px 10px; background: transparent; border-color: var(--border); color: var(--text-muted); }
+.btn-icon:hover { background: #fff0f0; border-color: var(--delp-red); color: var(--delp-red); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.form-actions { display: flex; gap: 10px; margin-top: 6px; grid-column: 1 / -1; }
 
-        .mensagem {
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 15px;
-            display: none;
-        }
-        .mensagem.sucesso { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .mensagem.erro { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .mensagem.info { display: block; background: #cce5ff; color: #004085; border: 1px solid #b8daff; }
+/* ── TOAST / MENSAGEM ─────────────────────────────────── */
+.toast-area { position: fixed; top: 68px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  max-width: 340px;
+  box-shadow: var(--shadow-md);
+  animation: slideIn .2s ease;
+  border-left: 4px solid transparent;
+}
+@keyframes slideIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform:none; } }
+.toast.ok   { background: #f0fdf4; color: #166534; border-color: var(--green); }
+.toast.err  { background: #fef2f2; color: #991b1b; border-color: var(--delp-red); }
+.toast.warn { background: #fffbeb; color: #92400e; border-color: var(--amber); }
+.toast.info { background: #eff6ff; color: #1e40af; border-color: var(--blue); }
 
-        .rateio-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-top: 15px;
-        }
-        .rateio-card {
-            background: #f8f9fa;
-            padding: 15px 18px;
-            border-radius: 10px;
-            border-left: 4px solid #1a73e8;
-        }
-        .rateio-card .cc-name { font-weight: bold; font-size: 14px; }
-        .rateio-card .cc-corridas { font-size: 26px; font-weight: bold; color: #1a73e8; margin: 3px 0; }
-        .rateio-card .cc-percent { color: #666; font-size: 13px; }
-        .rateio-card .cc-valor { font-size: 17px; font-weight: bold; color: #28a745; margin-top: 5px; }
-        .progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 4px; margin-top: 6px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #1a73e8, #0d47a1); border-radius: 4px; transition: width 0.5s; }
+/* ── TABELA ───────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; margin-top: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg-surface); padding: 9px 12px; text-align: left; font-weight: 600; color: var(--text-muted); border-bottom: 1.5px solid var(--border); white-space: nowrap; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg-surface); }
 
-        .total-rateio {
-            background: #e8f0fe;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 15px;
-            grid-column: 1 / -1;
-        }
-        .total-rateio strong { font-size: 18px; color: #1a73e8; }
+/* ── BADGES ───────────────────────────────────────────── */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge-taxi { background: #fef3c7; color: #92400e; }
+.badge-uber { background: #dbeafe; color: #1e40af; }
+.badge-motivo { background: #f0fdf4; color: #166534; }
 
-        .empty-state { text-align: center; color: #666; padding: 30px; }
-        .empty-state .icon { font-size: 40px; margin-bottom: 8px; }
+/* ── FILTROS ──────────────────────────────────────────── */
+.filtros { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 14px; }
+.filtros .form-group { flex: 1; min-width: 120px; margin: 0; }
 
-        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        .dashboard-card { background: #f8f9fa; padding: 15px 18px; border-radius: 10px; }
-        .dashboard-card h3 { color: #333; margin-bottom: 12px; font-size: 15px; }
-        .dashboard-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #dee2e6; }
-        .dashboard-item:last-child { border-bottom: none; }
-        .dashboard-item .label-dash { color: #555; }
-        .dashboard-item .value-dash { font-weight: bold; color: #1a73e8; }
+/* ── RATEIO ───────────────────────────────────────────── */
+.rateio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 16px; }
+.rateio-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--delp-red);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+.rc-code { font-size: 11px; font-weight: 600; color: var(--delp-red); }
+.rc-name { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+.rc-qtd  { font-size: 24px; font-weight: 700; color: var(--text-main); margin: 4px 0 0; }
+.rc-pct  { font-size: 12px; color: var(--text-light); }
+.rc-val  { font-size: 15px; font-weight: 600; color: var(--green); margin-top: 6px; }
+.prog-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--delp-red); border-radius: 2px; }
+.rateio-total {
+  grid-column: 1 / -1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.rateio-controles { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 16px; }
+.rateio-controles .form-group { flex: 1; min-width: 160px; margin: 0; }
 
-        .cc-tag {
-            display: inline-block;
-            background: white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-            min-width: 70px;
-        }
-        .cc-tag .numero { font-weight: bold; font-size: 18px; color: #1a73e8; }
-        .cc-tag .nome-cc { font-size: 10px; color: #666; }
-        .cc-tags-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin-top: 8px; }
+/* ── DASHBOARD ────────────────────────────────────────── */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.dash-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+.dash-card h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.dash-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.dash-row:last-child { border-bottom: none; }
+.dash-val { font-weight: 600; color: var(--blue); }
 
-        .status-envio { display: flex; align-items: center; gap: 6px; font-size: 13px; }
-        .status-envio .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-        .dot.green { background: #28a745; }
-        .dot.yellow { background: #fd7e14; }
+/* ── EMPTY STATE ──────────────────────────────────────── */
+.empty { text-align: center; padding: 32px; color: var(--text-light); }
+.empty svg { width: 36px; height: 36px; margin-bottom: 10px; opacity: .4; }
 
-        .erro-conexao {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #f5c6cb;
-            margin: 10px 0;
-            display: none;
-        }
-        .erro-conexao .btn-tentar {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-        .erro-conexao .btn-tentar:hover { background: #c82333; }
+/* ── LOADING ──────────────────────────────────────────── */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.4);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        .loading-overlay.active { display: flex; }
-        .loading-spinner {
-            background: white;
-            padding: 25px 35px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .loading-spinner .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #1a73e8;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 12px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+/* ── PAGINAÇÃO ────────────────────────────────────────── */
+.paginacao { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13px; }
+.paginacao span { color: var(--text-muted); }
 
-        .conexao-ok {
-            background: #d4edda;
-            color: #155724;
-            padding: 8px 15px;
-            border-radius: 8px;
-            border: 1px solid #c3e6cb;
-            margin: 10px 0;
-            display: none;
-            font-size: 14px;
-        }
-
-        @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .rateio-grid { grid-template-columns: 1fr; }
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .header { flex-direction: column; text-align: center; }
-            .tabs { flex-wrap: nowrap; }
-            .tab { padding: 8px 14px; font-size: 12px; }
-            .form-group.half { grid-column: 1; }
-        }
-    </style>
+/* ── RESPONSIVO ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .dash-grid { grid-template-columns: 1fr; }
+  .header-meta { display: none; }
+  .panel { padding: 16px; }
+}
+</style>
 </head>
 <body>
-    <!-- LOADING -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p>Processando...</p>
+
+<!-- ── TOAST AREA ───────────────────────────────────── -->
+<div class="toast-area" id="toastArea"></div>
+
+<!-- ── HEADER ───────────────────────────────────────── -->
+<header class="header">
+  <div class="header-brand">
+    <strong>Delp</strong>
+    <span class="sep">|</span>
+    <span class="sub">Controle de Transporte</span>
+  </div>
+  <div class="header-meta">
+    <span id="mesHeader"></span>
+    <span>Táxi <strong id="hTaxi">0</strong> · Uber <strong id="hUber">0</strong></span>
+    <span title="Status da conexão com o Sheets">
+      <span class="ping-dot" id="pingDot"></span>
+    </span>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- ── MÉTRICAS ─────────────────────────────────────── -->
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Corridas hoje</div>
+      <div class="metric-value red" id="mHoje">0</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">CCs ativos</div>
+      <div class="metric-value green" id="mCC">0</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Mês atual</div>
+      <div class="metric-value blue" id="mMes">0</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">CC mais usado</div>
+      <div class="metric-value" id="mTop" style="font-size:14px;margin-top:4px">—</div>
+    </div>
+  </div>
+
+  <!-- ── TABS ─────────────────────────────────────────── -->
+  <div class="tabs">
+    <button class="tab active" onclick="irPara('registro')">Registrar</button>
+    <button class="tab" onclick="irPara('historico')">Histórico</button>
+    <button class="tab" onclick="irPara('rateio')">Rateio</button>
+    <button class="tab" onclick="irPara('dashboard')">Dashboard</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAINEL: REGISTRAR                                  -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="panel active" id="panel-registro">
+    <div class="panel-title">Registrar utilização</div>
+    <form id="formRegistro" autocomplete="off">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Data e hora <span class="req">*</span></label>
+          <input type="datetime-local" id="dataCorrida" required>
         </div>
+
+        <div class="form-group">
+          <label>Tipo <span class="req">*</span></label>
+          <select id="tipoTransporte" required>
+            <option value="TAXI">Táxi</option>
+            <option value="UBER">Uber</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>Centro de custo <span class="req">*</span></label>
+          <div class="ac-wrap">
+            <input type="text" id="buscaCC" placeholder="Digite código ou nome do CC…" autocomplete="off">
+            <input type="hidden" id="centroCusto" required>
+            <div class="ac-list" id="acList"></div>
+          </div>
+          <span style="font-size:11px;color:var(--text-light);margin-top:3px">Ex: "Facilities" ou "2.07001.03.011"</span>
+        </div>
+
+        <div class="form-group">
+          <label>Solicitante <span class="req">*</span></label>
+          <input type="text" id="solicitante" placeholder="Nome do funcionário" required>
+        </div>
+
+        <div class="form-group">
+          <label>Motivo <span class="req">*</span></label>
+          <select id="motivo" required>
+            <option value="">Selecione…</option>
+            <option value="HORA_EXTRA">Hora extra</option>
+            <option value="SAIDA_FRETADO">Saída após fretado</option>
+            <option value="ATRASO">Atraso</option>
+            <option value="REUNIAO">Reunião</option>
+            <option value="TREINAMENTO">Treinamento</option>
+            <option value="OUTROS">Outros</option>
+          </select>
+        </div>
+
+        <div class="form-group full" id="grupoOutro" style="display:none">
+          <label>Especificar motivo <span class="req">*</span></label>
+          <input type="text" id="outroMotivo" placeholder="Descreva o motivo…">
+        </div>
+
+        <div class="form-group">
+          <label>Destino</label>
+          <input type="text" id="destino" placeholder="Ex: Aeroporto Confins">
+        </div>
+
+        <div class="form-group">
+          <label>Motorista</label>
+          <input type="text" id="motorista" placeholder="Nome do motorista">
+        </div>
+
+        <div class="form-group full">
+          <label>Observações</label>
+          <textarea id="observacoes" rows="2"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="btnRegistrar">
+            Registrar corrida
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="limparForm()">
+            Limpar
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAINEL: HISTÓRICO                                  -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-historico">
+    <div class="panel-title">Histórico de corridas</div>
+
+    <div class="filtros">
+      <div class="form-group">
+        <label>Data</label>
+        <input type="date" id="fData">
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="fTipo">
+          <option value="">Todos</option>
+          <option value="TAXI">Táxi</option>
+          <option value="UBER">Uber</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Motivo</label>
+        <select id="fMotivo">
+          <option value="">Todos</option>
+          <option value="HORA_EXTRA">Hora extra</option>
+          <option value="SAIDA_FRETADO">Saída após fretado</option>
+          <option value="ATRASO">Atraso</option>
+          <option value="REUNIAO">Reunião</option>
+          <option value="TREINAMENTO">Treinamento</option>
+          <option value="OUTROS">Outros</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <button class="btn btn-primary" onclick="carregarHistorico()">Filtrar</button>
+        <button class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
+        <button class="btn btn-secondary" onclick="enviarResumoDiario()" id="btnResumo">Resumo por e-mail</button>
+      </div>
     </div>
 
-    <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-            <h1>🚗 Controle de Transporte</h1>
-            <div class="header-actions">
-                <span class="info-badge">📅 <span id="mesAtual"></span></span>
-                <span class="info-badge">🚕 <span id="totalTaxi">0</span> | 🚙 <span id="totalUber">0</span></span>
-                <button class="btn btn-success" onclick="enviarResumoDiario()">📧 Resumo</button>
-                <button class="btn btn-warning" onclick="carregarTodosDados()">🔄 Recarregar</button>
-            </div>
-        </div>
-
-        <!-- STATUS CONEXÃO -->
-        <div class="conexao-ok" id="conexaoOk">
-            ✅ Conectado à planilha: <strong>Controle de Transporte - Portaria</strong>
-        </div>
-
-        <!-- CARDS -->
-        <div class="cards">
-            <div class="card"><div class="label">Total de Corridas (Hoje)</div><div class="valor" id="totalCorridas">0</div></div>
-            <div class="card"><div class="label">Centros de Custo</div><div class="valor green" id="totalCC">0</div></div>
-            <div class="card"><div class="label">Média por Dia</div><div class="valor orange" id="mediaDia">0</div></div>
-            <div class="card"><div class="label">CC Mais Usado</div><div class="valor purple" id="ccTop">-</div></div>
-            <div class="card"><div class="label">Status Resumo</div><div class="valor" style="font-size: 16px;" id="statusResumo"><span class="status-envio"><span class="dot yellow"></span> Pendente</span></div></div>
-        </div>
-
-        <!-- ERRO DE CONEXÃO -->
-        <div class="erro-conexao" id="erroConexao">
-            <strong>⚠️ Erro de conexão com a planilha!</strong>
-            <p>Não foi possível conectar ao Google Sheets. Os dados abaixo podem estar desatualizados.</p>
-            <button class="btn-tentar" onclick="carregarTodosDados()">🔄 Tentar novamente</button>
-        </div>
-
-        <!-- TABS -->
-        <div class="tabs">
-            <button class="tab active" onclick="abrirTab('registro')">📝 Registrar</button>
-            <button class="tab" onclick="abrirTab('historico')">📋 Histórico</button>
-            <button class="tab" onclick="abrirTab('rateio')">💰 Rateio</button>
-            <button class="tab" onclick="abrirTab('dashboard')">📊 Dashboard</button>
-        </div>
-
-        <!-- TAB REGISTRO -->
-        <div class="tab-content active" id="tab-registro">
-            <h2 style="margin-bottom: 15px;">📝 Registrar Utilização</h2>
-            <form id="formRegistro">
-                <div class="form-grid">
-                    <div class="form-group"><label>📅 Data/Hora <span class="required">*</span></label><input type="datetime-local" id="dataCorrida" required></div>
-                    <div class="form-group"><label>🚗 Tipo <span class="required">*</span></label><select id="tipoTransporte" required><option value="TAXI">🚕 Táxi</option><option value="UBER">🚙 Uber</option></select></div>
-                    <div class="form-group"><label>👤 Solicitante <span class="required">*</span></label><input type="text" id="solicitante" placeholder="Nome do funcionário" required></div>
-                    <div class="form-group half">
-                        <label>🏢 Centro de Custo <span class="required">*</span></label>
-                        <input type="text" id="buscaCC" placeholder="Digite o código ou nome do CC..." autocomplete="off">
-                        <input type="hidden" id="centroCusto" required>
-                        <div id="sugestoesCC" class="sugestoes"></div>
-                        <small style="color: #888; font-size: 11px;">Digite parte do código ou nome. Ex: "Suprimentos"</small>
-                    </div>
-                    <div class="form-group full">
-                        <label>📌 Motivo <span class="required">*</span></label>
-                        <select id="motivo" required>
-                            <option value="">Selecione...</option>
-                            <option value="HORA_EXTRA">⏰ Hora Extra</option>
-                            <option value="SAIDA_FRETADO">🚌 Saída Após Fretado</option>
-                            <option value="ATRASO">⏳ Atraso</option>
-                            <option value="REUNIAO">🤝 Reunião</option>
-                            <option value="TREINAMENTO">📚 Treinamento</option>
-                            <option value="OUTROS">📝 Outros</option>
-                        </select>
-                    </div>
-                    <div class="form-group full" id="grupoOutroMotivo" style="display: none;">
-                        <label>📝 Especificar <span class="required">*</span></label>
-                        <input type="text" id="outroMotivo" placeholder="Digite o motivo...">
-                    </div>
-                    <div class="form-group"><label>📍 Destino</label><input type="text" id="destino" placeholder="Ex: Aeroporto"></div>
-                    <div class="form-group"><label>👨‍✈️ Motorista</label><input type="text" id="motorista" placeholder="Nome do motorista"></div>
-                    <div class="form-group full"><label>📝 Observações</label><textarea id="observacoes" rows="2"></textarea></div>
-                    <div class="form-group full" style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button type="submit" class="btn-submit" style="flex: 1;" id="btnRegistrar">💾 Registrar</button>
-                        <button type="reset" class="btn btn-outline" style="border: 2px solid #ddd; color: #666; padding: 10px 20px; border-radius: 8px; background: transparent; cursor: pointer;" onclick="limparFormulario()">Limpar</button>
-                    </div>
-                </div>
-            </form>
-            <div class="mensagem" id="msgRegistro"></div>
-        </div>
-
-        <!-- TAB HISTÓRICO -->
-        <div class="tab-content" id="tab-historico">
-            <h2 style="margin-bottom: 10px;">📋 Histórico</h2>
-            <div class="filtros">
-                <div class="form-group"><label>CC</label><select id="filtroCC"><option value="">Todos</option></select></div>
-                <div class="form-group"><label>Data</label><input type="date" id="filtroData"></div>
-                <div class="form-group"><label>Tipo</label><select id="filtroTipo"><option value="">Todos</option><option value="TAXI">Táxi</option><option value="UBER">Uber</option></select></div>
-                <div class="form-group"><label>Motivo</label><select id="filtroMotivo"><option value="">Todos</option><option value="HORA_EXTRA">Hora Extra</option><option value="SAIDA_FRETADO">Saída Após Fretado</option><option value="ATRASO">Atraso</option><option value="REUNIAO">Reunião</option><option value="TREINAMENTO">Treinamento</option><option value="OUTROS">Outros</option></select></div>
-                <div class="form-group">
-                    <button class="btn btn-primary" onclick="carregarHistorico()" style="padding: 8px 18px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #1a73e8; color: white;">🔍 Filtrar</button>
-                    <button class="btn btn-outline" onclick="limparFiltrosHistorico()" style="padding: 8px 18px; border: 2px solid #ddd; border-radius: 8px; background: transparent; cursor: pointer; color: #666;">Limpar</button>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table>
-                    <thead><tr><th>#</th><th>Data/Hora</th><th>Tipo</th><th>CC</th><th>Solicitante</th><th>Motivo</th><th>Destino</th><th>Ações</th></tr></thead>
-                    <tbody id="tabelaHistorico"><tr><td colspan="8" class="empty-state"><div class="icon">📭</div>Nenhuma corrida registrada.</td></tr></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- TAB RATEIO -->
-        <div class="tab-content" id="tab-rateio">
-            <h2 style="margin-bottom: 10px;">💰 Rateio Mensal</h2>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-bottom: 15px;">
-                <div><label style="font-weight: 600;">Mês:</label> <strong id="mesRateio" style="font-size: 17px; color: #1a73e8;"></strong></div>
-                <div>
-                    <label style="font-weight: 600;">Valor Fatura (R$):</label>
-                    <input type="number" id="valorFatura" step="0.01" placeholder="0,00" style="width: 140px; display: inline-block; padding: 7px 10px; border: 2px solid #ddd; border-radius: 8px;">
-                    <button class="btn btn-success" onclick="calcularRateio()" style="padding: 8px 18px;">📊 Calcular</button>
-                </div>
-            </div>
-            <div id="rateioContainer">
-                <div class="rateio-grid" id="rateioGrid">
-                    <div class="total-rateio" style="grid-column: 1 / -1;"><div class="icon" style="font-size: 40px;">📊</div><p>Nenhuma corrida registrada.</p></div>
-                </div>
-            </div>
-            <div style="margin-top: 15px; text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button class="btn btn-primary" onclick="exportarRateio()" style="padding: 8px 20px;">📥 Exportar CSV</button>
-                <button class="btn btn-warning" onclick="enviarRateioEmail()" style="padding: 8px 20px;">📧 Enviar Email</button>
-            </div>
-        </div>
-
-        <!-- TAB DASHBOARD -->
-        <div class="tab-content" id="tab-dashboard">
-            <h2 style="margin-bottom: 15px;">📊 Dashboard</h2>
-            <div id="dashboardContainer"><div style="text-align:center; padding:30px; color:#666;">⏳ Carregando...</div></div>
-        </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Data / Hora</th>
+            <th>Tipo</th>
+            <th>Centro de custo</th>
+            <th>Solicitante</th>
+            <th>Motivo</th>
+            <th>Destino</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbHistorico">
+          <tr><td colspan="8" class="empty">Carregando…</td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <script>
-        // ============================================================
-        // 🔧 CONFIGURAÇÃO - URL DO BACKEND (WEB APP)
-        // ============================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgxcLhlD2WZ3_kBkwko5v-G_S2y_P93LiwJI_KpIwWtrN7MfkGe7YZBXrsLTwn3yHB/exec';
-
-        // ============================================================
-        // 1. CENTROS DE CUSTO
-        // ============================================================
-        const CENTROS_CUSTO = {
-            '1.07001.01.002': { nome: 'Usinagem Mecanica Pesada', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.01.004': { nome: 'Ferramentaria', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.02.001': { nome: 'Preparacao', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.03.001': { nome: 'Pré-Montagem', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.03.003': { nome: 'Acabamento/Pintura', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.03.004': { nome: 'Montagem Mecânica', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.03.005': { nome: 'Solda Robotizada', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.03.006': { nome: 'Solda Convencional', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.03.007': { nome: 'Forno de Tratamento Termico', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.03.008': { nome: 'Linha Automatizada', grupo: '🏭 PRODUÇÃO' },
-            '1.07001.07.001': { nome: 'Controle de Qualidade', grupo: '🏭 PRODUÇÃO' },
-            '1.07002.03.001': { nome: 'Almoxarifado', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.04.001': { nome: 'Manutenção e Expansão', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.05.001': { nome: 'Planejamento PCP', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.06.001': { nome: 'Engenharia Industrial Mecânica', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.06.002': { nome: 'Engenharia Industrial de Caldeiraria', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.07.001': { nome: 'Gerencia da Producao', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.07.002': { nome: 'Delp Açu', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.07.003': { nome: 'Apoio Usinagem e Montagem Mecânica', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.07.004': { nome: 'Apoio Caldeiraria', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.08.001': { nome: 'Engenharia de Materiais e Solda', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.08.002': { nome: 'Centro Tecnologico de Soldagem - CTS', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.09.001': { nome: 'Menor aprendiz', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.10.001': { nome: 'Controle de Qualidade Documental', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.11.002': { nome: 'Montagem Externa Geral', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.11.008': { nome: 'Instalação Coifa 2 Gerdau', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.11.027': { nome: 'Inatalação Vigas', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.12.001': { nome: 'SESMT', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.12.002': { nome: 'Sistema Garantia Qualidade', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.13.001': { nome: 'Excelência Operacional', grupo: '🔧 ADMINISTRATIVO' },
-            '1.07002.14.001': { nome: 'Logística', grupo: '🔧 ADMINISTRATIVO' },
-            '2.07001.01.002': { nome: 'Comercial Indústria', grupo: '💼 COMERCIAL' },
-            '2.07001.01.004': { nome: 'Marketing', grupo: '💼 COMERCIAL' },
-            '2.07001.01.005': { nome: 'Comercial Subsea', grupo: '💼 COMERCIAL' },
-            '2.07001.01.007': { nome: 'Field Service', grupo: '💼 COMERCIAL' },
-            '2.07001.01.009': { nome: 'Comercial Mooring', grupo: '💼 COMERCIAL' },
-            '2.07001.01.010': { nome: 'Engenharia de Aplicação e Vendas', grupo: '💼 COMERCIAL' },
-            '2.07001.02.001': { nome: 'Gente & Gestão', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.03.001': { nome: 'Financeiro', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.03.002': { nome: 'Gerencia de Projetos', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.03.004': { nome: 'Tecnologia da Informação', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.03.005': { nome: 'Diretoria e assessoria', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.03.008': { nome: 'Suprimentos', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.03.010': { nome: 'Pesquisa e Desenvolvimento – P&D', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.03.011': { nome: 'Facilities', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.03.012': { nome: 'Núcleo de Inovação', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.04.001': { nome: 'Administracao Geral', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.05.001': { nome: 'Conselho de administracao', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.06.001': { nome: 'Projeto Estrutura Organizacional', grupo: '📊 ADMINISTRATIVO GERAL' },
-            '2.07001.06.002': { nome: 'Delp USA', grupo: '📊 ADMINISTRATIVO GERAL' }
-        };
-
-        const MOTIVOS = {
-            'HORA_EXTRA': '⏰ Hora Extra',
-            'SAIDA_FRETADO': '🚌 Saída Após Fretado',
-            'ATRASO': '⏳ Atraso',
-            'REUNIAO': '🤝 Reunião',
-            'TREINAMENTO': '📚 Treinamento',
-            'OUTROS': '📝 Outros'
-        };
-
-        let dadosCache = [];
-        let statusEnvio = 'pendente';
-        let conexaoOk = false;
-
-        // ============================================================
-        // 2. INICIALIZAÇÃO
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const now = new Date();
-            const mes = now.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-            document.getElementById('mesAtual').textContent = mes.charAt(0).toUpperCase() + mes.slice(1);
-            document.getElementById('mesRateio').textContent = mes.charAt(0).toUpperCase() + mes.slice(1);
-
-            atualizarDataHora();
-            document.getElementById('filtroData').value = now.toISOString().slice(0, 10);
-
-            preencherFiltroCC();
-            configurarAutocomplete();
-            configurarMotivo();
-
-            // Mostra conexão OK
-            document.getElementById('conexaoOk').style.display = 'block';
-
-            // Carrega dados
-            carregarTodosDados();
-
-            setInterval(atualizarDataHora, 60000);
-
-            console.log('✅ Sistema iniciado!');
-            console.log('🔗 URL:', SCRIPT_URL);
-        });
-
-        // ============================================================
-        // 3. DATA/HORA ATUAL
-        // ============================================================
-        function atualizarDataHora() {
-            const now = new Date();
-            const ano = now.getFullYear();
-            const mes = String(now.getMonth() + 1).padStart(2, '0');
-            const dia = String(now.getDate()).padStart(2, '0');
-            const hora = String(now.getHours()).padStart(2, '0');
-            const minuto = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('dataCorrida').value = `${ano}-${mes}-${dia}T${hora}:${minuto}`;
-        }
-
-        // ============================================================
-        // 4. PREENCHER FILTRO CC
-        // ============================================================
-        function preencherFiltroCC() {
-            const select = document.getElementById('filtroCC');
-            select.innerHTML = '<option value="">Todos</option>';
-            const sorted = Object.keys(CENTROS_CUSTO).sort();
-            sorted.forEach(codigo => {
-                const option = document.createElement('option');
-                option.value = codigo;
-                option.textContent = `${codigo} - ${CENTROS_CUSTO[codigo].nome}`;
-                select.appendChild(option);
-            });
-        }
-
-        // ============================================================
-        // 5. AUTOCOMPLETE
-        // ============================================================
-        function configurarAutocomplete() {
-            const buscaInput = document.getElementById('buscaCC');
-            const hiddenInput = document.getElementById('centroCusto');
-            const sugestoesDiv = document.getElementById('sugestoesCC');
-
-            buscaInput.addEventListener('input', function() {
-                const termo = this.value.toLowerCase().trim();
-                if (!termo) {
-                    sugestoesDiv.style.display = 'none';
-                    hiddenInput.value = '';
-                    this.classList.remove('valid', 'invalid');
-                    return;
-                }
-                const resultados = Object.entries(CENTROS_CUSTO)
-                    .filter(([codigo, dados]) => {
-                        return codigo.includes(termo) || dados.nome.toLowerCase().includes(termo);
-                    })
-                    .slice(0, 15);
-
-                if (resultados.length === 0) {
-                    sugestoesDiv.innerHTML = '<div class="sem-resultado">Nenhum CC encontrado</div>';
-                    sugestoesDiv.style.display = 'block';
-                    hiddenInput.value = '';
-                    this.classList.remove('valid');
-                    this.classList.add('invalid');
-                    return;
-                }
-
-                sugestoesDiv.innerHTML = resultados.map(([codigo, dados]) => `
-                    <div class="item" onclick="selecionarCC('${codigo}', '${dados.nome}')">
-                        <span class="codigo">${codigo}</span>
-                        <span class="nome">${dados.nome}</span>
-                        <span class="grupo">${dados.grupo}</span>
-                    </div>
-                `).join('');
-                sugestoesDiv.style.display = 'block';
-            });
-
-            buscaInput.addEventListener('blur', function() {
-                setTimeout(() => {
-                    if (!sugestoesDiv.matches(':hover')) {
-                        sugestoesDiv.style.display = 'none';
-                    }
-                }, 200);
-            });
-
-            buscaInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    const primeiro = sugestoesDiv.querySelector('.item');
-                    if (primeiro) { primeiro.click();
-                        e.preventDefault(); }
-                }
-            });
-
-            window.selecionarCC = function(codigo, nome) {
-                buscaInput.value = `${codigo} - ${nome}`;
-                hiddenInput.value = codigo;
-                sugestoesDiv.style.display = 'none';
-                buscaInput.classList.remove('invalid');
-                buscaInput.classList.add('valid');
-            };
-        }
-
-        // ============================================================
-        // 6. CONFIGURAR MOTIVO
-        // ============================================================
-        function configurarMotivo() {
-            const select = document.getElementById('motivo');
-            const grupo = document.getElementById('grupoOutroMotivo');
-            const input = document.getElementById('outroMotivo');
-
-            select.addEventListener('change', function() {
-                if (this.value === 'OUTROS') {
-                    grupo.style.display = 'block';
-                    input.required = true;
-                    input.focus();
-                } else {
-                    grupo.style.display = 'none';
-                    input.required = false;
-                    input.value = '';
-                }
-            });
-        }
-
-        // ============================================================
-        // 7. TABS
-        // ============================================================
-        function abrirTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            document.querySelectorAll('.tab').forEach(t => {
-                const mapa = { 'registro': 'Registrar', 'historico': 'Histórico', 'rateio': 'Rateio',
-                    'dashboard': 'Dashboard' };
-                if (t.textContent.includes(mapa[tabId])) t.classList.add('active');
-            });
-            if (tabId === 'rateio') calcularRateio();
-            if (tabId === 'dashboard') carregarDashboard();
-        }
-
-        // ============================================================
-        // 8. FUNÇÃO PARA CHAMAR O APPS SCRIPT VIA JSONP
-        // ============================================================
-        function chamarAppsScript(dados, callback) {
-            // Adiciona um timestamp para evitar cache
-            dados._ = new Date().getTime();
-
-            // Constrói a URL com os parâmetros
-            const params = new URLSearchParams(dados);
-            const url = SCRIPT_URL + '?' + params.toString();
-
-            console.log('📤 Chamando Apps Script:', url);
-
-            // Usa um iframe invisível para fazer a requisição
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = 'about:blank';
-            document.body.appendChild(iframe);
-
-            let timeoutId = setTimeout(function() {
-                if (document.body.contains(iframe)) {
-                    document.body.removeChild(iframe);
-                }
-                console.warn('⏰ Timeout - tentando novamente...');
-                callback('Timeout', null);
-            }, 15000);
-
-            iframe.onload = function() {
-                clearTimeout(timeoutId);
-                try {
-                    // Tenta ler o conteúdo do iframe
-                    const doc = iframe.contentDocument || iframe.contentWindow.document;
-                    if (doc && doc.body) {
-                        const text = doc.body.innerText || doc.body.textContent || '';
-                        document.body.removeChild(iframe);
-                        console.log('📥 Resposta:', text);
-                        callback(null, text);
-                        return;
-                    }
-                } catch(e) {
-                    console.warn('⚠️ Erro ao ler iframe:', e);
-                }
-                document.body.removeChild(iframe);
-                callback(null, 'OK');
-            };
-
-            iframe.onerror = function() {
-                clearTimeout(timeoutId);
-                document.body.removeChild(iframe);
-                callback('Erro no iframe', null);
-            };
-
-            iframe.src = url;
-        }
-
-        // ============================================================
-        // 9. CARREGAR TODOS OS DADOS
-        // ============================================================
-        function carregarTodosDados() {
-            document.getElementById('erroConexao').style.display = 'none';
-            carregarHistorico();
-            calcularRateio();
-            carregarDashboard();
-        }
-
-        // ============================================================
-        // 10. REGISTRAR CORRIDA
-        // ============================================================
-        document.getElementById('formRegistro').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const ccCodigo = document.getElementById('centroCusto').value;
-            if (!ccCodigo) {
-                mostrarMensagem('msgRegistro', '❌ Selecione um Centro de Custo!', 'erro');
-                document.getElementById('buscaCC').focus();
-                return;
-            }
-
-            const motivo = document.getElementById('motivo').value;
-            if (!motivo) {
-                mostrarMensagem('msgRegistro', '❌ Selecione o motivo!', 'erro');
-                document.getElementById('motivo').focus();
-                return;
-            }
-
-            let motivoFinal = motivo;
-            if (motivo === 'OUTROS') {
-                const outro = document.getElementById('outroMotivo').value.trim();
-                if (!outro) {
-                    mostrarMensagem('msgRegistro', '❌ Digite o motivo!', 'erro');
-                    document.getElementById('outroMotivo').focus();
-                    return;
-                }
-                motivoFinal = 'OUTROS: ' + outro;
-            }
-
-            const dados = {
-                acao: 'registrar',
-                data: document.getElementById('dataCorrida').value,
-                tipo: document.getElementById('tipoTransporte').value,
-                centroCusto: ccCodigo,
-                ccNome: CENTROS_CUSTO[ccCodigo]?.nome || ccCodigo,
-                solicitante: document.getElementById('solicitante').value.trim(),
-                motivo: motivoFinal,
-                destino: document.getElementById('destino').value.trim(),
-                motorista: document.getElementById('motorista').value.trim(),
-                observacoes: document.getElementById('observacoes').value.trim()
-            };
-
-            if (!dados.solicitante) {
-                mostrarMensagem('msgRegistro', '❌ Digite o nome do solicitante!', 'erro');
-                document.getElementById('solicitante').focus();
-                return;
-            }
-
-            const btn = document.getElementById('btnRegistrar');
-            btn.disabled = true;
-            btn.textContent = '⏳ Registrando...';
-            document.getElementById('loadingOverlay').classList.add('active');
-
-            chamarAppsScript(dados, function(err, resultado) {
-                document.getElementById('loadingOverlay').classList.remove('active');
-
-                if (err) {
-                    console.error('Erro:', err);
-                    // Salva localmente mesmo com erro
-                    const novoRegistro = {
-                        ID: dadosCache.length + 1,
-                        Data: dados.data,
-                        Tipo: dados.tipo,
-                        CC: dados.centroCusto,
-                        CC_Nome: dados.ccNome,
-                        Solicitante: dados.solicitante,
-                        Motivo: dados.motivo,
-                        Destino: dados.destino,
-                        Motorista: dados.motorista
-                    };
-                    dadosCache.push(novoRegistro);
-                    salvarDadosLocalmente(dadosCache);
-
-                    mostrarMensagem('msgRegistro',
-                        `✅ Corrida registrada LOCALMENTE!<br><strong>CC:</strong> ${ccCodigo}<br><strong>Motivo:</strong> ${dados.motivo}`,
-                        'sucesso'
-                    );
-
-                    document.getElementById('formRegistro').reset();
-                    document.getElementById('centroCusto').value = '';
-                    document.getElementById('buscaCC').value = '';
-                    document.getElementById('buscaCC').classList.remove('valid', 'invalid');
-                    document.getElementById('grupoOutroMotivo').style.display = 'none';
-                    document.getElementById('outroMotivo').required = false;
-                    atualizarDataHora();
-
-                    carregarTodosDados();
-
-                    btn.disabled = false;
-                    btn.textContent = '💾 Registrar';
-                    return;
-                }
-
-                if (resultado && resultado.includes('OK')) {
-                    mostrarMensagem('msgRegistro',
-                        `✅ Corrida registrada!<br><strong>CC:</strong> ${ccCodigo}<br><strong>Motivo:</strong> ${dados.motivo}`,
-                        'sucesso'
-                    );
-
-                    document.getElementById('formRegistro').reset();
-                    document.getElementById('centroCusto').value = '';
-                    document.getElementById('buscaCC').value = '';
-                    document.getElementById('buscaCC').classList.remove('valid', 'invalid');
-                    document.getElementById('grupoOutroMotivo').style.display = 'none';
-                    document.getElementById('outroMotivo').required = false;
-                    atualizarDataHora();
-
-                    statusEnvio = 'pendente';
-                    document.getElementById('statusResumo').innerHTML =
-                        `<span class="status-envio"><span class="dot yellow"></span> Pendente</span>`;
-
-                    carregarTodosDados();
-                } else {
-                    mostrarMensagem('msgRegistro', '❌ Erro ao registrar: ' + (resultado || 'Tente novamente'), 'erro');
-                }
-
-                btn.disabled = false;
-                btn.textContent = '💾 Registrar';
-            });
-        });
-
-        function limparFormulario() {
-            document.getElementById('formRegistro').reset();
-            document.getElementById('centroCusto').value = '';
-            document.getElementById('buscaCC').value = '';
-            document.getElementById('buscaCC').classList.remove('valid', 'invalid');
-            document.getElementById('grupoOutroMotivo').style.display = 'none';
-            document.getElementById('outroMotivo').required = false;
-            atualizarDataHora();
-            document.getElementById('msgRegistro').style.display = 'none';
-        }
-
-        // ============================================================
-        // 11. SALVAR DADOS LOCALMENTE
-        // ============================================================
-        function salvarDadosLocalmente(dados) {
-            try {
-                localStorage.setItem('dadosTransporte', JSON.stringify(dados));
-            } catch(e) {
-                console.warn('⚠️ Erro ao salvar localmente:', e);
-            }
-        }
-
-        function carregarDadosLocalmente() {
-            try {
-                const saved = localStorage.getItem('dadosTransporte');
-                if (saved) {
-                    const dados = JSON.parse(saved);
-                    if (Array.isArray(dados) && dados.length > 0) {
-                        return dados;
-                    }
-                }
-            } catch(e) {
-                console.warn('⚠️ Erro ao carregar localmente:', e);
-            }
-            return [];
-        }
-
-        // ============================================================
-        // 12. CARREGAR HISTÓRICO
-        // ============================================================
-        function carregarHistorico() {
-            const tbody = document.getElementById('tabelaHistorico');
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#666;">⏳ Carregando...</td></tr>';
-
-            // Primeiro, carrega dados locais se houver
-            const dadosLocais = carregarDadosLocalmente();
-            if (dadosLocais.length > 0) {
-                dadosCache = dadosLocais;
-                exibirHistorico(dadosLocais);
-                atualizarResumo(dadosLocais);
-            }
-
-            chamarAppsScript({ acao: 'listar' }, function(err, data) {
-                if (err) {
-                    console.warn('⚠️ Erro ao carregar histórico:', err);
-                    document.getElementById('erroConexao').style.display = 'block';
-                    return;
-                }
-
-                try {
-                    const dados = JSON.parse(data);
-                    if (Array.isArray(dados) && dados.length > 0) {
-                        dadosCache = dados;
-                        salvarDadosLocalmente(dados);
-                        document.getElementById('erroConexao').style.display = 'none';
-                        exibirHistorico(dados);
-                        atualizarResumo(dados);
-                    }
-                } catch (e) {
-                    console.warn('⚠️ Erro ao processar dados:', e);
-                }
-            });
-        }
-
-        function exibirHistorico(dados) {
-            const filtroCC = document.getElementById('filtroCC').value;
-            const filtroData = document.getElementById('filtroData').value;
-            const filtroTipo = document.getElementById('filtroTipo').value;
-            const filtroMotivo = document.getElementById('filtroMotivo').value;
-
-            let filtrados = dados;
-            if (filtroCC) filtrados = filtrados.filter(d => d.CC === filtroCC);
-            if (filtroData) filtrados = filtrados.filter(d => d.Data && d.Data.startsWith(filtroData));
-            if (filtroTipo) filtrados = filtrados.filter(d => d.Tipo === filtroTipo);
-            if (filtroMotivo) filtrados = filtrados.filter(d => d.Motivo && d.Motivo.startsWith(filtroMotivo));
-
-            const tbody = document.getElementById('tabelaHistorico');
-
-            if (filtrados.length === 0) {
-                tbody.innerHTML =
-                    `<tr><td colspan="8" class="empty-state"><div class="icon">🔍</div>Nenhuma corrida encontrada.</td></tr>`;
-                return;
-            }
-
-            filtrados.sort((a, b) => (b.ID || 0) - (a.ID || 0));
-            tbody.innerHTML = '';
-
-            filtrados.forEach(item => {
-                const data = item.Data ? new Date(item.Data).toLocaleString('pt-BR') : '-';
-                const nomeCC = CENTROS_CUSTO[item.CC]?.nome || item.CC_Nome || item.CC || '-';
-                const motivo = item.Motivo || '-';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${item.ID || '-'}</td>
-                    <td>${data}</td>
-                    <td><span class="badge ${item.Tipo === 'TAXI' ? 'badge-taxi' : 'badge-uber'}">${item.Tipo || '-'}</span></td>
-                    <td><strong>${item.CC || '-'}</strong><br><small style="color:#666;">${nomeCC}</small></td>
-                    <td>${item.Solicitante || '-'}</td>
-                    <td><span class="badge-motivo">${motivo}</span></td>
-                    <td>${item.Destino || '-'}</td>
-                    <td><button class="btn btn-danger" onclick="excluirCorrida(${item.ID})">🗑️</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function limparFiltrosHistorico() {
-            document.getElementById('filtroCC').value = '';
-            document.getElementById('filtroTipo').value = '';
-            document.getElementById('filtroMotivo').value = '';
-            document.getElementById('filtroData').value = new Date().toISOString().slice(0, 10);
-            carregarHistorico();
-        }
-
-        // ============================================================
-        // 13. ATUALIZAR RESUMO
-        // ============================================================
-        function atualizarResumo(dados) {
-            if (!dados || dados.length === 0) return;
-
-            const hoje = new Date().toISOString().slice(0, 10);
-            const hojeDados = dados.filter(d => d.Data && d.Data.startsWith(hoje));
-
-            const total = hojeDados.length;
-            const taxis = hojeDados.filter(d => d.Tipo === 'TAXI').length;
-            const ubers = hojeDados.filter(d => d.Tipo === 'UBER').length;
-            const ccs = [...new Set(hojeDados.map(d => d.CC))];
-
-            let ccCount = {};
-            hojeDados.forEach(d => { ccCount[d.CC] = (ccCount[d.CC] || 0) + 1; });
-            let topCC = '-',
-                max = 0;
-            for (let cc in ccCount) {
-                if (ccCount[cc] > max) { max = ccCount[cc];
-                    topCC = cc + ' - ' + (CENTROS_CUSTO[cc]?.nome || cc); }
-            }
-
-            const dias = new Date().getDate() || 1;
-            const media = total > 0 ? (total / dias).toFixed(1) : 0;
-
-            document.getElementById('totalCorridas').textContent = total;
-            document.getElementById('totalTaxi').textContent = taxis;
-            document.getElementById('totalUber').textContent = ubers;
-            document.getElementById('totalCC').textContent = ccs.length || 0;
-            document.getElementById('mediaDia').textContent = media;
-            document.getElementById('ccTop').textContent = topCC;
-        }
-
-        // ============================================================
-        // 14. CALCULAR RATEIO
-        // ============================================================
-        function calcularRateio() {
-            const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
-            const mesAtual = new Date().toISOString().slice(0, 7);
-            const grid = document.getElementById('rateioGrid');
-
-            grid.innerHTML = '<div class="total-rateio" style="grid-column: 1 / -1;">⏳ Calculando...</div>';
-
-            const processar = (dados) => {
-                if (!dados || dados.length === 0) {
-                    grid.innerHTML =
-                        `<div class="total-rateio" style="grid-column: 1 / -1;"><div class="icon" style="font-size:40px;">📊</div><p>Nenhum dado disponível.</p></div>`;
-                    return;
-                }
-
-                const mesDados = dados.filter(d => d.Data && d.Data.startsWith(mesAtual));
-                if (mesDados.length === 0) {
-                    grid.innerHTML =
-                        `<div class="total-rateio" style="grid-column: 1 / -1;"><div class="icon" style="font-size:40px;">📊</div><p>Nenhuma corrida em ${mesAtual}.</p></div>`;
-                    return;
-                }
-
-                let ccCount = {};
-                mesDados.forEach(d => { ccCount[d.CC] = (ccCount[d.CC] || 0) + 1; });
-
-                const total = mesDados.length;
-                const ccs = Object.keys(ccCount).sort();
-                grid.innerHTML = '';
-                let totalRateado = 0;
-
-                ccs.forEach(cc => {
-                    const qtd = ccCount[cc];
-                    const pct = (qtd / total) * 100;
-                    const valor = (pct / 100) * valorFatura;
-                    totalRateado += valor;
-                    const nome = CENTROS_CUSTO[cc]?.nome || cc;
-
-                    const div = document.createElement('div');
-                    div.className = 'rateio-card';
-                    div.innerHTML = `
-                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span class="cc-name">🏢 ${cc}</span>
-                            <span class="cc-percent">${pct.toFixed(1)}%</span>
-                        </div>
-                        <div style="font-size:11px;color:#666;">${nome}</div>
-                        <div class="cc-corridas">${qtd}</div>
-                        <div style="font-size:12px;color:#666;">corridas</div>
-                        <div class="cc-valor">R$ ${valor.toFixed(2)}</div>
-                        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div>
-                    `;
-                    grid.appendChild(div);
-                });
-
-                const totalDiv = document.createElement('div');
-                totalDiv.className = 'total-rateio';
-                totalDiv.innerHTML = `
-                    <strong>Total Rateado: R$ ${totalRateado.toFixed(2)}</strong>
-                    <br><small>${total} corridas • ${ccs.length} CCs</small>
-                    <br><small style="color:#666;">Fatura: R$ ${valorFatura.toFixed(2)} | Diferença: R$ ${(valorFatura - totalRateado).toFixed(2)}</small>
-                `;
-                grid.appendChild(totalDiv);
-            };
-
-            if (dadosCache.length > 0) {
-                processar(dadosCache);
-            } else {
-                const dadosLocais = carregarDadosLocalmente();
-                if (dadosLocais.length > 0) {
-                    processar(dadosLocais);
-                }
-                chamarAppsScript({ acao: 'listar' }, function(err, data) {
-                    if (!err && data) {
-                        try { dadosCache = JSON.parse(data);
-                            salvarDadosLocalmente(dadosCache); } catch (e) {}
-                        processar(dadosCache);
-                    }
-                });
-            }
-        }
-
-        // ============================================================
-        // 15. CARREGAR DASHBOARD
-        // ============================================================
-        function carregarDashboard() {
-            const container = document.getElementById('dashboardContainer');
-            container.innerHTML = '<div style="text-align:center;padding:30px;color:#666;">⏳ Carregando...</div>';
-
-            const processar = (dados) => {
-                if (!dados || dados.length === 0) {
-                    container.innerHTML =
-                        `<div class="empty-state"><div class="icon">📊</div><p>Nenhum dado disponível.</p></div>`;
-                    return;
-                }
-
-                const mesAtual = new Date().toISOString().slice(0, 7);
-                const mesDados = dados.filter(d => d.Data && d.Data.startsWith(mesAtual));
-
-                if (mesDados.length === 0) {
-                    container.innerHTML =
-                        `<div class="empty-state"><div class="icon">📊</div><p>Nenhum dado para ${mesAtual}.</p></div>`;
-                    return;
-                }
-
-                let ccCount = {},
-                    tipoCount = { TAXI: 0, UBER: 0 },
-                    motivoCount = {};
-                mesDados.forEach(d => {
-                    ccCount[d.CC] = (ccCount[d.CC] || 0) + 1;
-                    tipoCount[d.Tipo] = (tipoCount[d.Tipo] || 0) + 1;
-                    const key = d.Motivo ? d.Motivo.split(':')[0].trim() : 'OUTROS';
-                    motivoCount[key] = (motivoCount[key] || 0) + 1;
-                });
-
-                const total = mesDados.length;
-                const topCCs = Object.entries(ccCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
-                const topMotivos = Object.entries(motivoCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
-
-                let html = `
-                    <div class="dashboard-grid">
-                        <div class="dashboard-card">
-                            <h3>📈 Distribuição por Tipo</h3>
-                            <div class="dashboard-item"><span class="label-dash">🚕 Táxi</span><span class="value-dash">${tipoCount.TAXI} (${((tipoCount.TAXI/total)*100).toFixed(1)}%)</span></div>
-                            <div class="dashboard-item"><span class="label-dash">🚙 Uber</span><span class="value-dash">${tipoCount.UBER} (${((tipoCount.UBER/total)*100).toFixed(1)}%)</span></div>
-                            <div class="dashboard-item" style="border-bottom:none;margin-top:8px;font-weight:bold;">
-                                <span class="label-dash">Total</span>
-                                <span class="value-dash" style="color:#333;">${total}</span>
-                            </div>
-                        </div>
-                        <div class="dashboard-card">
-                            <h3>🏆 Top 5 CCs</h3>
-                            ${topCCs.map(([cc, count], i) => {
-                                const emojis = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-                                return `<div class="dashboard-item"><span class="label-dash">${emojis[i]||'•'} ${cc}</span><span class="value-dash">${count} (${((count/total)*100).toFixed(1)}%)</span></div>`;
-                            }).join('')}
-                        </div>
-                    </div>
-                    <div class="dashboard-card" style="margin-top:15px;">
-                        <h3>📌 Motivos mais comuns</h3>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:8px;">
-                            ${topMotivos.map(([motivo, count]) => `
-                                <div style="background:white;padding:10px;border-radius:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-                                    <div style="font-weight:bold;font-size:18px;color:#1a73e8;">${count}</div>
-                                    <div style="font-size:11px;color:#666;">${MOTIVOS[motivo] || motivo}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    <div class="dashboard-card" style="margin-top:15px;">
-                        <h3>📊 Todos os CCs</h3>
-                        <div class="cc-tags-grid">
-                            ${Object.keys(ccCount).sort().map(cc => `
-                                <div class="cc-tag"><div class="numero">${ccCount[cc]}</div><div class="nome-cc">${cc}</div></div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-                container.innerHTML = html;
-            };
-
-            if (dadosCache.length > 0) {
-                processar(dadosCache);
-            } else {
-                const dadosLocais = carregarDadosLocalmente();
-                if (dadosLocais.length > 0) {
-                    processar(dadosLocais);
-                }
-                chamarAppsScript({ acao: 'listar' }, function(err, data) {
-                    if (!err && data) {
-                        try { dadosCache = JSON.parse(data);
-                            salvarDadosLocalmente(dadosCache); } catch (e) {}
-                        processar(dadosCache);
-                    }
-                });
-            }
-        }
-
-        // ============================================================
-        // 16. ENVIAR RESUMO DIÁRIO
-        // ============================================================
-        function enviarResumoDiario() {
-            const btn = document.querySelector('.btn-success');
-            btn.disabled = true;
-            btn.textContent = '⏳ Enviando...';
-
-            chamarAppsScript({ acao: 'resumo' }, function(err, resultado) {
-                if (err) {
-                    console.error('Erro:', err);
-                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar resumo. Tente novamente.', 'erro');
-                    btn.disabled = false;
-                    btn.textContent = '📧 Resumo';
-                    return;
-                }
-
-                if (resultado && resultado.includes('OK')) {
-                    statusEnvio = 'enviado';
-                    document.getElementById('statusResumo').innerHTML =
-                        `<span class="status-envio"><span class="dot green"></span> Enviado hoje</span>`;
-                    mostrarMensagem('msgRegistro', '✅ Resumo enviado para Facilities!', 'sucesso');
-                } else {
-                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar resumo: ' + (resultado || 'Tente novamente'), 'erro');
-                }
-
-                btn.disabled = false;
-                btn.textContent = '📧 Resumo';
-            });
-        }
-
-        // ============================================================
-        // 17. EXCLUIR CORRIDA
-        // ============================================================
-        function excluirCorrida(id) {
-            if (!confirm('Excluir esta corrida?')) return;
-
-            chamarAppsScript({ acao: 'excluir', id: id }, function(err, resultado) {
-                if (err) {
-                    console.error('Erro:', err);
-                    mostrarMensagem('msgRegistro', '❌ Erro ao excluir.', 'erro');
-                    return;
-                }
-
-                statusEnvio = 'pendente';
-                document.getElementById('statusResumo').innerHTML =
-                    `<span class="status-envio"><span class="dot yellow"></span> Pendente</span>`;
-                carregarTodosDados();
-                mostrarMensagem('msgRegistro', '🗑️ Corrida excluída!', 'sucesso');
-            });
-        }
-
-        // ============================================================
-        // 18. EXPORTAR RATEIO
-        // ============================================================
-        function exportarRateio() {
-            const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
-            const mesAtual = new Date().toISOString().slice(0, 7);
-
-            const dados = dadosCache.length > 0 ? dadosCache : carregarDadosLocalmente();
-
-            if (!dados || dados.length === 0) {
-                alert('Nenhum dado disponível. Recarregue primeiro.');
-                return;
-            }
-
-            const mesDados = dados.filter(d => d.Data && d.Data.startsWith(mesAtual));
-            if (mesDados.length === 0) {
-                alert('Nenhuma corrida neste mês.');
-                return;
-            }
-
-            let ccCount = {};
-            mesDados.forEach(d => { ccCount[d.CC] = (ccCount[d.CC] || 0) + 1; });
-
-            const total = mesDados.length;
-            let csv = 'Centro de Custo,Nome,Corridas,Percentual,Valor Rateado,Motivos\n';
-
-            Object.entries(ccCount).forEach(([cc, count]) => {
-                const pct = (count / total) * 100;
-                const valor = (pct / 100) * valorFatura;
-                const nome = CENTROS_CUSTO[cc]?.nome || cc;
-                const motivos = mesDados.filter(d => d.CC === cc).map(d => d.Motivo || 'N/A').join('; ');
-                csv += `${cc},"${nome}",${count},${pct.toFixed(1)}%,R$ ${valor.toFixed(2)},"${motivos}"\n`;
-            });
-
-            csv += `\nTotal,"",${total},100%,R$ ${valorFatura.toFixed(2)},""\n`;
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `rateio_${mesAtual}.csv`;
-            link.click();
-
-            mostrarMensagem('msgRegistro', '✅ CSV exportado!', 'sucesso');
-        }
-
-        // ============================================================
-        // 19. ENVIAR RATEIO EMAIL
-        // ============================================================
-        function enviarRateioEmail() {
-            const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 10000;
-            const mesAtual = new Date().toISOString().slice(0, 7);
-
-            if (!valorFatura || valorFatura <= 0) {
-                alert('⚠️ Digite um valor de fatura válido!');
-                return;
-            }
-
-            chamarAppsScript({
-                acao: 'rateio',
-                valorFatura: valorFatura.toString(),
-                mes: mesAtual
-            }, function(err, resultado) {
-                if (err) {
-                    console.error('Erro:', err);
-                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar rateio.', 'erro');
-                    return;
-                }
-
-                if (resultado && resultado.includes('OK')) {
-                    mostrarMensagem('msgRegistro', '✅ Rateio enviado para Financeiro e Gestor!', 'sucesso');
-                } else {
-                    mostrarMensagem('msgRegistro', '❌ Erro ao enviar rateio: ' + (resultado || 'Tente novamente'), 'erro');
-                }
-            });
-        }
-
-        // ============================================================
-        // 20. MENSAGENS
-        // ============================================================
-        function mostrarMensagem(id, texto, tipo) {
-            const el = document.getElementById(id);
-            el.innerHTML = texto;
-            el.className = 'mensagem ' + tipo;
-            el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 8000);
-        }
-    </script>
+    <div class="paginacao" id="paginacao" style="display:none">
+      <button class="btn btn-secondary" id="btnAnterior" onclick="mudarPagina(-1)">← Anterior</button>
+      <span id="infoPagina"></span>
+      <button class="btn btn-secondary" id="btnProxima" onclick="mudarPagina(1)">Próxima →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAINEL: RATEIO                                     -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-rateio">
+    <div class="panel-title">Rateio mensal</div>
+
+    <div class="rateio-controles">
+      <div class="form-group">
+        <label>Mês de referência</label>
+        <input type="month" id="mesRateio">
+      </div>
+      <div class="form-group">
+        <label>Valor da fatura (R$)</label>
+        <input type="number" id="valorFatura" step="0.01" placeholder="0,00" min="0">
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="calcularRateio()">Calcular</button>
+        <button class="btn btn-secondary" onclick="exportarCSV()">Exportar CSV</button>
+        <button class="btn btn-secondary" onclick="enviarRateio()" id="btnRateioEmail">Enviar por e-mail</button>
+      </div>
+    </div>
+
+    <div id="rateioContainer">
+      <div class="empty">Informe o valor da fatura e clique em Calcular.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ -->
+  <!-- PAINEL: DASHBOARD                                  -->
+  <!-- ══════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-dashboard">
+    <div class="panel-title">Dashboard — mês atual</div>
+    <div id="dashContainer">
+      <div class="empty">Carregando…</div>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO — substitua pela URL do seu Web App publicado
+// ============================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqOCWB1mzEw8kAdrtvUcwTF9wLfwGemeZu4ZA6i9TdwggzYJznT7feutGzYwpPDXPR/exec';
+
+// ============================================================
+// CENTROS DE CUSTO
+// ============================================================
+const CC = {
+  '1.07001.01.002':{ nome:'Usinagem Mecanica Pesada',           grupo:'Produção' },
+  '1.07001.01.004':{ nome:'Ferramentaria',                      grupo:'Produção' },
+  '1.07001.02.001':{ nome:'Preparacao',                         grupo:'Produção' },
+  '1.07001.03.001':{ nome:'Pré-Montagem',                       grupo:'Produção' },
+  '1.07001.03.003':{ nome:'Acabamento/Pintura',                  grupo:'Produção' },
+  '1.07001.03.004':{ nome:'Montagem Mecânica',                  grupo:'Produção' },
+  '1.07001.03.005':{ nome:'Solda Robotizada',                   grupo:'Produção' },
+  '1.07001.03.006':{ nome:'Solda Convencional',                 grupo:'Produção' },
+  '1.07001.03.007':{ nome:'Forno de Tratamento Termico',        grupo:'Produção' },
+  '1.07001.03.008':{ nome:'Linha Automatizada',                 grupo:'Produção' },
+  '1.07001.07.001':{ nome:'Controle de Qualidade',              grupo:'Produção' },
+  '1.07002.03.001':{ nome:'Almoxarifado',                       grupo:'Administrativo' },
+  '1.07002.04.001':{ nome:'Manutenção e Expansão',              grupo:'Administrativo' },
+  '1.07002.05.001':{ nome:'Planejamento PCP',                   grupo:'Administrativo' },
+  '1.07002.06.001':{ nome:'Engenharia Industrial Mecânica',     grupo:'Administrativo' },
+  '1.07002.06.002':{ nome:'Engenharia Industrial de Caldeiraria',grupo:'Administrativo' },
+  '1.07002.07.001':{ nome:'Gerencia da Producao',               grupo:'Administrativo' },
+  '1.07002.07.002':{ nome:'Delp Açu',                          grupo:'Administrativo' },
+  '1.07002.07.003':{ nome:'Apoio Usinagem e Montagem Mecânica', grupo:'Administrativo' },
+  '1.07002.07.004':{ nome:'Apoio Caldeiraria',                  grupo:'Administrativo' },
+  '1.07002.08.001':{ nome:'Engenharia de Materiais e Solda',    grupo:'Administrativo' },
+  '1.07002.08.002':{ nome:'Centro Tecnologico de Soldagem - CTS',grupo:'Administrativo' },
+  '1.07002.09.001':{ nome:'Menor aprendiz',                     grupo:'Administrativo' },
+  '1.07002.10.001':{ nome:'Controle de Qualidade Documental',   grupo:'Administrativo' },
+  '1.07002.11.002':{ nome:'Montagem Externa Geral',             grupo:'Administrativo' },
+  '1.07002.11.008':{ nome:'Instalação Coifa 2 Gerdau',          grupo:'Administrativo' },
+  '1.07002.11.027':{ nome:'Instalação Vigas',                   grupo:'Administrativo' },
+  '1.07002.12.001':{ nome:'SESMT',                              grupo:'Administrativo' },
+  '1.07002.12.002':{ nome:'Sistema Garantia Qualidade',         grupo:'Administrativo' },
+  '1.07002.13.001':{ nome:'Excelência Operacional',             grupo:'Administrativo' },
+  '1.07002.14.001':{ nome:'Logística',                          grupo:'Administrativo' },
+  '2.07001.01.002':{ nome:'Comercial Indústria',                grupo:'Comercial' },
+  '2.07001.01.004':{ nome:'Marketing',                          grupo:'Comercial' },
+  '2.07001.01.005':{ nome:'Comercial Subsea',                   grupo:'Comercial' },
+  '2.07001.01.007':{ nome:'Field Service',                      grupo:'Comercial' },
+  '2.07001.01.009':{ nome:'Comercial Mooring',                  grupo:'Comercial' },
+  '2.07001.01.010':{ nome:'Engenharia de Aplicação e Vendas',   grupo:'Comercial' },
+  '2.07001.02.001':{ nome:'Gente & Gestão',                     grupo:'Corporativo' },
+  '2.07001.03.001':{ nome:'Financeiro',                         grupo:'Corporativo' },
+  '2.07001.03.002':{ nome:'Gerencia de Projetos',               grupo:'Corporativo' },
+  '2.07001.03.004':{ nome:'Tecnologia da Informação',           grupo:'Corporativo' },
+  '2.07001.03.005':{ nome:'Diretoria e assessoria',             grupo:'Corporativo' },
+  '2.07001.03.008':{ nome:'Suprimentos',                        grupo:'Corporativo' },
+  '2.07001.03.010':{ nome:'Pesquisa e Desenvolvimento – P&D',   grupo:'Corporativo' },
+  '2.07001.03.011':{ nome:'Facilities',                         grupo:'Corporativo' },
+  '2.07001.03.012':{ nome:'Núcleo de Inovação',                 grupo:'Corporativo' },
+  '2.07001.04.001':{ nome:'Administracao Geral',                grupo:'Corporativo' },
+  '2.07001.05.001':{ nome:'Conselho de administracao',          grupo:'Corporativo' },
+  '2.07001.06.001':{ nome:'Projeto Estrutura Organizacional',   grupo:'Corporativo' },
+  '2.07001.06.002':{ nome:'Delp USA',                           grupo:'Corporativo' }
+};
+
+// ============================================================
+// ESTADO GLOBAL
+// ============================================================
+let cache       = [];        // corridas do mês carregadas
+let paginaAtual = 1;
+let totalPaginas = 1;
+let mesAtivo    = '';
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const agora  = new Date();
+  mesAtivo     = agora.toISOString().slice(0, 7);
+
+  document.getElementById('mesHeader').textContent =
+    agora.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+  document.getElementById('fData').value    = agora.toISOString().slice(0, 10);
+  document.getElementById('mesRateio').value = mesAtivo;
+
+  setDataHoraAtual();
+  setInterval(setDataHoraAtual, 60000);
+
+  configurarAutocomplete();
+  configurarMotivo();
+
+  carregarMes(mesAtivo);
+  testarConexao();
+});
+
+// ============================================================
+// COMUNICAÇÃO COM APPS SCRIPT — fetch POST com JSON
+// ============================================================
+async function chamarScript(payload) {
+  const res = await fetch(SCRIPT_URL, {
+    method : 'POST',
+    mode   : 'no-cors',         // Apps Script não suporta CORS real
+    headers: { 'Content-Type': 'text/plain' },
+    body   : JSON.stringify(payload)
+  });
+  // no-cors retorna opaque response — sem acesso ao body
+  // Para leitura de dados (listar), usamos fetch via GET + parâmetros
+  return res;
+}
+
+async function chamarScriptGET(params) {
+  const qs  = new URLSearchParams(params).toString();
+  const url = SCRIPT_URL + '?' + qs + '&_=' + Date.now();
+  const res = await fetch(url, { mode: 'cors' });
+  return res.text();
+}
+
+// ── PING DE CONEXÃO ─────────────────────────────────────────
+async function testarConexao() {
+  const dot = document.getElementById('pingDot');
+  try {
+    const txt = await chamarScriptGET({ acao: 'ping' });
+    dot.className = txt.startsWith('OK') ? 'ping-dot ok' : 'ping-dot err';
+  } catch(_) {
+    dot.className = 'ping-dot err';
+  }
+}
+
+// ============================================================
+// CARREGAR DADOS DO MÊS (GET)
+// ============================================================
+async function carregarMes(mes, pagina = 1) {
+  try {
+    const txt = await chamarScriptGET({ acao: 'listar', mes, pagina });
+    const dados = JSON.parse(txt);
+    cache         = dados.corridas || [];
+    paginaAtual   = dados.pagina   || 1;
+    totalPaginas  = dados.paginas  || 1;
+    atualizarMetricas(cache);
+    return cache;
+  } catch(e) {
+    console.warn('Erro ao carregar mês:', e);
+    return [];
+  }
+}
+
+// ============================================================
+// REGISTRAR CORRIDA
+// ============================================================
+document.getElementById('formRegistro').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const cc = document.getElementById('centroCusto').value;
+  if (!cc) { toast('Selecione um Centro de Custo.', 'err'); return; }
+
+  const motivo = document.getElementById('motivo').value;
+  if (!motivo) { toast('Selecione o motivo.', 'err'); return; }
+
+  let motivoFinal = motivo;
+  if (motivo === 'OUTROS') {
+    const outro = document.getElementById('outroMotivo').value.trim();
+    if (!outro) { toast('Especifique o motivo.', 'err'); return; }
+    motivoFinal = 'OUTROS: ' + outro;
+  }
+
+  const btn = document.getElementById('btnRegistrar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Registrando…';
+
+  const payload = {
+    acao        : 'registrar',
+    data        : document.getElementById('dataCorrida').value,
+    tipo        : document.getElementById('tipoTransporte').value,
+    centroCusto : cc,
+    ccNome      : CC[cc]?.nome || cc,
+    solicitante : document.getElementById('solicitante').value.trim(),
+    motivo      : motivoFinal,
+    destino     : document.getElementById('destino').value.trim(),
+    motorista   : document.getElementById('motorista').value.trim(),
+    observacoes : document.getElementById('observacoes').value.trim(),
+    operador    : 'portaria'
+  };
+
+  try {
+    // Com mode:no-cors não lemos a resposta — confiamos no envio
+    await chamarScript(payload);
+    toast('Corrida registrada com sucesso.', 'ok');
+    limparForm();
+    setTimeout(() => carregarMes(mesAtivo), 2000); // aguarda o Sheets processar
+  } catch(err) {
+    toast('Erro ao registrar: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Registrar corrida';
+  }
+});
+
+// ============================================================
+// HISTÓRICO
+// ============================================================
+async function carregarHistorico() {
+  const tbody = document.getElementById('tbHistorico');
+  tbody.innerHTML = '<tr><td colspan="8" class="empty">Carregando…</td></tr>';
+
+  const data   = document.getElementById('fData').value;
+  const tipo   = document.getElementById('fTipo').value;
+  const motivo = document.getElementById('fMotivo').value;
+
+  try {
+    const txt = await chamarScriptGET({
+      acao   : 'listar',
+      mes    : mesAtivo,
+      data   : data || '',
+      pagina : paginaAtual
+    });
+    const dados = JSON.parse(txt);
+    let corridas = dados.corridas || [];
+    totalPaginas = dados.paginas || 1;
+
+    // Filtros locais (tipo e motivo — não passados para o servidor)
+    if (tipo)   corridas = corridas.filter(c => c.Tipo === tipo);
+    if (motivo) corridas = corridas.filter(c => (c.Motivo || '').startsWith(motivo));
+
+    renderHistorico(corridas);
+    renderPaginacao(dados.pagina, dados.paginas, dados.total);
+  } catch(err) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">Erro ao carregar histórico.</td></tr>';
+  }
+}
+
+function renderHistorico(corridas) {
+  const tbody = document.getElementById('tbHistorico');
+
+  if (!corridas.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">Nenhuma corrida encontrada.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = corridas.map(c => {
+    const dt = c.Data ? new Date(c.Data).toLocaleString('pt-BR') : '—';
+    const nm = CC[c.CC]?.nome || c.CC_Nome || c.CC || '—';
+    return `<tr>
+      <td style="color:var(--text-light)">${c.ID || '—'}</td>
+      <td>${dt}</td>
+      <td><span class="badge ${c.Tipo === 'TAXI' ? 'badge-taxi' : 'badge-uber'}">${c.Tipo || '—'}</span></td>
+      <td><strong>${c.CC || '—'}</strong><br><span style="font-size:11px;color:var(--text-light)">${nm}</span></td>
+      <td>${c.Solicitante || '—'}</td>
+      <td><span class="badge badge-motivo" style="font-size:11px">${c.Motivo || '—'}</span></td>
+      <td>${c.Destino || '—'}</td>
+      <td>
+        <button class="btn btn-icon" title="Excluir" onclick="excluirCorrida(${c.ID})">&#128465;</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPaginacao(pagina, total, qtd) {
+  const el = document.getElementById('paginacao');
+  if (!total || total <= 1) { el.style.display = 'none'; return; }
+  el.style.display = 'flex';
+  document.getElementById('infoPagina').textContent =
+    `Página ${pagina} de ${total} · ${qtd} registros`;
+  document.getElementById('btnAnterior').disabled = pagina <= 1;
+  document.getElementById('btnProxima').disabled  = pagina >= total;
+}
+
+function mudarPagina(delta) {
+  paginaAtual = Math.max(1, Math.min(totalPaginas, paginaAtual + delta));
+  carregarHistorico();
+}
+
+function limparFiltros() {
+  document.getElementById('fData').value   = new Date().toISOString().slice(0, 10);
+  document.getElementById('fTipo').value   = '';
+  document.getElementById('fMotivo').value = '';
+  paginaAtual = 1;
+  carregarHistorico();
+}
+
+// ============================================================
+// EXCLUIR CORRIDA
+// ============================================================
+async function excluirCorrida(id) {
+  if (!confirm('Excluir a corrida #' + id + '? Esta ação será registrada no log.')) return;
+  try {
+    await chamarScript({ acao: 'excluir', id, operador: 'portaria' });
+    toast('Corrida #' + id + ' excluída.', 'warn');
+    setTimeout(() => carregarHistorico(), 2000);
+  } catch(err) {
+    toast('Erro ao excluir: ' + err.message, 'err');
+  }
+}
+
+// ============================================================
+// RATEIO
+// ============================================================
+function calcularRateio() {
+  const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 0;
+  const mes = document.getElementById('mesRateio').value || mesAtivo;
+  const cont = document.getElementById('rateioContainer');
+
+  if (!valorFatura) { toast('Informe o valor da fatura.', 'warn'); return; }
+
+  const dados = cache.filter(c => (c.Data || '').startsWith(mes));
+  if (!dados.length) { cont.innerHTML = '<div class="empty">Nenhuma corrida em ' + mes + '.</div>'; return; }
+
+  const ccCount = {};
+  dados.forEach(c => {
+    const k = c.CC || 'SEM_CC';
+    if (!ccCount[k]) ccCount[k] = { nome: CC[k]?.nome || c.CC_Nome || k, qtd: 0 };
+    ccCount[k].qtd++;
+  });
+
+  const total        = dados.length;
+  let totalRateado   = 0;
+  const sorted       = Object.entries(ccCount).sort((a, b) => b[1].qtd - a[1].qtd);
+
+  const cards = sorted.map(([cc, info]) => {
+    const pct   = (info.qtd / total) * 100;
+    const valor = (pct / 100) * valorFatura;
+    totalRateado += valor;
+    return `<div class="rateio-card">
+      <div class="rc-code">${cc}</div>
+      <div class="rc-name">${info.nome}</div>
+      <div class="rc-qtd">${info.qtd}</div>
+      <div class="rc-pct">${pct.toFixed(1)}% das corridas</div>
+      <div class="rc-val">R$ ${valor.toFixed(2)}</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  cont.innerHTML = `
+    <div class="rateio-grid">
+      ${cards}
+      <div class="rateio-total" style="grid-column:1/-1">
+        <div>
+          <strong style="font-size:15px">Total rateado: R$ ${totalRateado.toFixed(2)}</strong><br>
+          <span style="font-size:12px;color:var(--text-muted)">${total} corridas · ${sorted.length} CCs · Fatura: R$ ${valorFatura.toFixed(2)}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted)">
+          Diferença: R$ ${(valorFatura - totalRateado).toFixed(2)}
+        </div>
+      </div>
+    </div>`;
+}
+
+function exportarCSV() {
+  const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 0;
+  const mes = document.getElementById('mesRateio').value || mesAtivo;
+  const dados = cache.filter(c => (c.Data || '').startsWith(mes));
+  if (!dados.length) { toast('Nenhum dado para exportar.', 'warn'); return; }
+
+  const ccCount = {};
+  dados.forEach(c => {
+    const k = c.CC || 'SEM_CC';
+    if (!ccCount[k]) ccCount[k] = { nome: CC[k]?.nome || c.CC_Nome || k, qtd: 0 };
+    ccCount[k].qtd++;
+  });
+
+  const total  = dados.length;
+  let csv = 'CC,Nome,Corridas,Percentual,Valor\n';
+  Object.entries(ccCount).forEach(([cc, info]) => {
+    const pct   = (info.qtd / total) * 100;
+    const valor = (pct / 100) * valorFatura;
+    csv += `${cc},"${info.nome}",${info.qtd},${pct.toFixed(1)}%,R$ ${valor.toFixed(2)}\n`;
+  });
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `rateio_transporte_${mes}.csv`;
+  a.click();
+  toast('CSV exportado.', 'ok');
+}
+
+async function enviarRateio() {
+  const valorFatura = parseFloat(document.getElementById('valorFatura').value) || 0;
+  const mes = document.getElementById('mesRateio').value || mesAtivo;
+  if (!valorFatura) { toast('Informe o valor da fatura antes de enviar.', 'warn'); return; }
+
+  const btn = document.getElementById('btnRateioEmail');
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+
+  try {
+    await chamarScript({ acao: 'rateio', valorFatura: String(valorFatura), mes });
+    toast('Rateio enviado para Financeiro e Gestor.', 'ok');
+  } catch(err) {
+    toast('Erro ao enviar: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enviar por e-mail';
+  }
+}
+
+// ============================================================
+// RESUMO DIÁRIO
+// ============================================================
+async function enviarResumoDiario() {
+  const btn = document.getElementById('btnResumo');
+  btn.disabled = true;
+  btn.textContent = 'Enviando…';
+  try {
+    await chamarScript({ acao: 'resumo' });
+    toast('Resumo enviado para Facilities.', 'ok');
+  } catch(err) {
+    toast('Erro: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Resumo por e-mail';
+  }
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function carregarDashboard() {
+  const cont = document.getElementById('dashContainer');
+  const dados = cache;
+
+  if (!dados.length) {
+    cont.innerHTML = '<div class="empty">Nenhum dado disponível para o mês.</div>';
+    return;
+  }
+
+  const taxis  = dados.filter(c => c.Tipo === 'TAXI').length;
+  const ubers  = dados.filter(c => c.Tipo === 'UBER').length;
+  const total  = dados.length;
+
+  const ccCount  = {};
+  const motCount = {};
+  dados.forEach(c => {
+    ccCount[c.CC]  = (ccCount[c.CC]  || 0) + 1;
+    const mk = (c.Motivo || 'OUTROS').split(':')[0].trim();
+    motCount[mk] = (motCount[mk] || 0) + 1;
+  });
+
+  const topCC  = Object.entries(ccCount).sort((a,b) => b[1]-a[1]).slice(0, 5);
+  const topMot = Object.entries(motCount).sort((a,b) => b[1]-a[1]).slice(0, 5);
+
+  const MOTIVOS_LABEL = {
+    HORA_EXTRA:'Hora extra', SAIDA_FRETADO:'Saída após fretado',
+    ATRASO:'Atraso', REUNIAO:'Reunião', TREINAMENTO:'Treinamento', OUTROS:'Outros'
+  };
+
+  cont.innerHTML = `
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h3>Distribuição por tipo</h3>
+        <div class="dash-row"><span>Táxi</span><span class="dash-val">${taxis} (${((taxis/total)*100).toFixed(1)}%)</span></div>
+        <div class="dash-row"><span>Uber</span><span class="dash-val">${ubers} (${((ubers/total)*100).toFixed(1)}%)</span></div>
+        <div class="dash-row" style="font-weight:600"><span>Total</span><span>${total}</span></div>
+      </div>
+      <div class="dash-card">
+        <h3>Top 5 centros de custo</h3>
+        ${topCC.map(([cc, n]) =>
+          `<div class="dash-row"><span title="${CC[cc]?.nome||cc}">${cc}</span>
+           <span class="dash-val">${n} (${((n/total)*100).toFixed(1)}%)</span></div>`
+        ).join('')}
+      </div>
+      <div class="dash-card" style="grid-column:1/-1">
+        <h3>Motivos mais frequentes</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:4px">
+          ${topMot.map(([m, n]) =>
+            `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center">
+              <div style="font-size:22px;font-weight:700;color:var(--delp-red)">${n}</div>
+              <div style="font-size:11px;color:var(--text-muted)">${MOTIVOS_LABEL[m]||m}</div>
+            </div>`
+          ).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// MÉTRICAS DO HEADER
+// ============================================================
+function atualizarMetricas(dados) {
+  const hoje  = new Date().toISOString().slice(0, 10);
+  const hd    = dados.filter(c => (c.Data || '').startsWith(hoje));
+  const taxis = hd.filter(c => c.Tipo === 'TAXI').length;
+  const ubers = hd.filter(c => c.Tipo === 'UBER').length;
+  const ccs   = [...new Set(hd.map(c => c.CC))];
+
+  const ccCount = {};
+  hd.forEach(c => { ccCount[c.CC] = (ccCount[c.CC]||0)+1; });
+  const top = Object.entries(ccCount).sort((a,b)=>b[1]-a[1])[0];
+
+  document.getElementById('mHoje').textContent = hd.length;
+  document.getElementById('mCC').textContent   = ccs.length;
+  document.getElementById('mMes').textContent  = dados.length;
+  document.getElementById('mTop').textContent  = top ? top[0] : '—';
+  document.getElementById('hTaxi').textContent = taxis;
+  document.getElementById('hUber').textContent = ubers;
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function irPara(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => {
+    const mapa = { registro:'Registrar', historico:'Histórico', rateio:'Rateio', dashboard:'Dashboard' };
+    if (t.textContent.trim() === mapa[id]) t.classList.add('active');
+  });
+
+  if (id === 'historico') carregarHistorico();
+  if (id === 'rateio')    calcularRateio();
+  if (id === 'dashboard') carregarDashboard();
+}
+
+// ============================================================
+// AUTOCOMPLETE DE CC
+// ============================================================
+function configurarAutocomplete() {
+  const busca  = document.getElementById('buscaCC');
+  const hidden = document.getElementById('centroCusto');
+  const lista  = document.getElementById('acList');
+
+  busca.addEventListener('input', () => {
+    const t = busca.value.toLowerCase().trim();
+    hidden.value = '';
+    if (!t) { lista.style.display = 'none'; return; }
+
+    const res = Object.entries(CC)
+      .filter(([cod, d]) => cod.includes(t) || d.nome.toLowerCase().includes(t))
+      .slice(0, 12);
+
+    if (!res.length) { lista.style.display = 'none'; return; }
+
+    lista.innerHTML = res.map(([cod, d]) =>
+      `<div class="ac-item" data-cod="${cod}" data-nome="${d.nome}">
+        <span class="cc-code">${cod}</span>
+        <span class="cc-name">${d.nome}</span>
+        <span class="cc-group">${d.grupo}</span>
+      </div>`
+    ).join('');
+    lista.style.display = 'block';
+  });
+
+  lista.addEventListener('click', e => {
+    const item = e.target.closest('.ac-item');
+    if (!item) return;
+    const cod  = item.dataset.cod;
+    const nome = item.dataset.nome;
+    busca.value  = cod + ' — ' + nome;
+    hidden.value = cod;
+    lista.style.display = 'none';
+  });
+
+  document.addEventListener('click', e => {
+    if (!busca.contains(e.target) && !lista.contains(e.target)) {
+      lista.style.display = 'none';
+    }
+  });
+
+  busca.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const primeiro = lista.querySelector('.ac-item');
+      if (primeiro) { primeiro.click(); e.preventDefault(); }
+    }
+  });
+}
+
+// ============================================================
+// MOTIVO OUTROS
+// ============================================================
+function configurarMotivo() {
+  const sel   = document.getElementById('motivo');
+  const grupo = document.getElementById('grupoOutro');
+  const input = document.getElementById('outroMotivo');
+  sel.addEventListener('change', () => {
+    const vis = sel.value === 'OUTROS';
+    grupo.style.display = vis ? 'flex' : 'none';
+    input.required = vis;
+    if (!vis) input.value = '';
+  });
+}
+
+// ============================================================
+// UTILITÁRIOS
+// ============================================================
+function setDataHoraAtual() {
+  const n = new Date();
+  const pad = v => String(v).padStart(2, '0');
+  document.getElementById('dataCorrida').value =
+    `${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())}T${pad(n.getHours())}:${pad(n.getMinutes())}`;
+}
+
+function limparForm() {
+  document.getElementById('formRegistro').reset();
+  document.getElementById('centroCusto').value = '';
+  document.getElementById('buscaCC').value = '';
+  document.getElementById('grupoOutro').style.display = 'none';
+  document.getElementById('outroMotivo').required = false;
+  setDataHoraAtual();
+}
+
+function toast(msg, tipo = 'info') {
+  const area = document.getElementById('toastArea');
+  const el   = document.createElement('div');
+  el.className = 'toast ' + tipo;
+  el.textContent = msg;
+  area.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; }, 4000);
+  setTimeout(() => el.remove(), 4400);
+}
+</script>
 </body>
 </html>
