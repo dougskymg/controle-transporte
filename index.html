@@ -311,31 +311,47 @@ tr:hover td { background: var(--bg-surface); }
 .paginacao { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13px; }
 .paginacao span { color: var(--text-muted); }
 
-/* ── TAGS DE PASSAGEIROS ──────────────────────────────── */
-.passageiro-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+/* ── PARADAS DE PASSAGEIROS ───────────────────────────── */
+.parada-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-main);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  position: relative;
 }
-.passageiro-tag button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-light);
-  font-size: 14px;
-  line-height: 1;
-  padding: 0;
+.parada-card .parada-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
-.passageiro-tag button:hover { color: var(--delp-red); }
+.parada-card .parada-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--delp-red); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.parada-card .parada-nome {
+  font-weight: 600; font-size: 14px; flex: 1; margin-left: 10px;
+}
+.parada-card .btn-remover-parada {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-light); font-size: 18px; padding: 0;
+  line-height: 1;
+}
+.parada-card .btn-remover-parada:hover { color: var(--delp-red); }
+.parada-grid {
+  display: grid;
+  grid-template-columns: 1fr 120px 1fr 120px;
+  gap: 10px;
+}
+@media (max-width: 640px) {
+  .parada-grid { grid-template-columns: 1fr 1fr; }
+}
+.parada-grid label { font-size: 11px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 3px; }
+.parada-grid input { width: 100%; padding: 7px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-family: inherit; }
+.parada-grid input:focus { outline: none; border-color: var(--border-focus); }
 
 /* ── RESPONSIVO ───────────────────────────────────────── */
 @media (max-width: 640px) {
@@ -461,12 +477,12 @@ tr:hover td { background: var(--bg-surface); }
             <input type="text" id="inputPassageiro" placeholder="Nome do passageiro"
               style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarPassageiro()}">
             <button type="button" class="btn btn-primary" onclick="adicionarPassageiro()"
-              style="white-space:nowrap;padding:9px 16px">+ Adicionar</button>
+              style="white-space:nowrap;padding:9px 16px">+ Adicionar parada</button>
           </div>
-          <div id="listaPassageiros" style="display:flex;flex-wrap:wrap;gap:6px;min-height:32px"></div>
+          <div id="listaPassageiros"></div>
           <input type="hidden" id="passageiros" required>
           <span style="font-size:11px;color:var(--text-light);margin-top:3px">
-            Adicione um ou mais passageiros. Pressione Enter ou clique em Adicionar.
+            Adicione um ou mais passageiros. Com múltiplos, origem e destino são definidos por parada.
           </span>
         </div>
 
@@ -488,24 +504,23 @@ tr:hover td { background: var(--bg-surface); }
           <input type="text" id="outroMotivo" placeholder="Descreva o motivo…">
         </div>
 
-        <div class="form-group">
-          <label>Origem <span class="req">*</span></label>
-          <input type="text" id="origem" placeholder="Ex: Portaria Vespasiano" required>
-        </div>
-
-        <div class="form-group">
-          <label>Horário de saída <span class="req">*</span></label>
-          <input type="time" id="horarioSaida" required>
-        </div>
-
-        <div class="form-group">
-          <label>Destino <span class="req">*</span></label>
-          <input type="text" id="destino" placeholder="Ex: Aeroporto Confins" required>
-        </div>
-
-        <div class="form-group">
-          <label>Horário de chegada prevista</label>
-          <input type="time" id="horarioChegada">
+        <div id="camposOrigemDestino" class="form-group full" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="form-group">
+            <label>Origem <span class="req" id="reqOrigem">*</span></label>
+            <input type="text" id="origem" placeholder="Ex: Portaria Vespasiano" required>
+          </div>
+          <div class="form-group">
+            <label>Horário de saída <span class="req" id="reqHorSaida">*</span></label>
+            <input type="time" id="horarioSaida" required>
+          </div>
+          <div class="form-group">
+            <label>Destino <span class="req" id="reqDestino">*</span></label>
+            <input type="text" id="destino" placeholder="Ex: Aeroporto Confins" required>
+          </div>
+          <div class="form-group">
+            <label>Horário de chegada prevista</label>
+            <input type="time" id="horarioChegada">
+          </div>
         </div>
 
         <div class="form-group">
@@ -841,8 +856,8 @@ document.getElementById('formRegistro').addEventListener('submit', async functio
   const unidade  = document.getElementById('unidade').value;
   const codigoOS = unidade === 'OS' ? document.getElementById('codigoOS').value.trim() : '';
 
-  const passageiros = document.getElementById('passageiros').value.trim();
-  if (!passageiros) {
+  // Valida passageiros / paradas
+  if (!paradasLista.length) {
     toast('Adicione pelo menos um passageiro.', 'err');
     document.getElementById('inputPassageiro').focus();
     btn.disabled = false;
@@ -850,24 +865,41 @@ document.getElementById('formRegistro').addEventListener('submit', async functio
     return;
   }
 
+  const multiplosPassageiros = paradasLista.length > 1;
+
+  // Para corrida simples usa campos gerais; para múltiplos usa paradas
+  const origemGeral       = document.getElementById('origem').value.trim();
+  const horarioSaidaGeral = document.getElementById('horarioSaida').value;
+  const destinoGeral      = document.getElementById('destino').value.trim();
+  const horChegadaGeral   = document.getElementById('horarioChegada').value;
+
+  // Monta string de passageiros para exibição simples
+  const passageirosStr = paradasLista.map(p => p.nome).join(', ');
+
+  // Paradas em JSON — vazio se passageiro único (usa campos gerais)
+  const paradasJSON = multiplosPassageiros
+    ? JSON.stringify(paradasLista)
+    : '';
+
   const payload = {
-    acao          : 'registrar',
-    data          : document.getElementById('dataCorrida').value,
-    tipo          : document.getElementById('tipoTransporte').value,
-    centroCusto   : cc,
-    ccNome        : CC[cc]?.nome || cc,
+    acao             : 'registrar',
+    data             : document.getElementById('dataCorrida').value,
+    tipo             : document.getElementById('tipoTransporte').value,
+    centroCusto      : cc,
+    ccNome           : CC[cc]?.nome || cc,
     unidade,
     codigoOS,
-    solicitante   : document.getElementById('solicitante').value.trim(),
-    passageiros,
-    motivo        : motivoFinal,
-    origem        : document.getElementById('origem').value.trim(),
-    horarioSaida  : document.getElementById('horarioSaida').value,
-    destino       : document.getElementById('destino').value.trim(),
-    horarioChegada: document.getElementById('horarioChegada').value,
-    motorista     : document.getElementById('motorista').value.trim(),
-    observacoes   : document.getElementById('observacoes').value.trim(),
-    operador      : 'portaria'
+    solicitante      : document.getElementById('solicitante').value.trim(),
+    passageiros      : passageirosStr,
+    paradas          : paradasJSON,
+    motivo           : motivoFinal,
+    origem           : multiplosPassageiros ? '' : origemGeral,
+    horarioSaida     : multiplosPassageiros ? '' : horarioSaidaGeral,
+    destino          : multiplosPassageiros ? '' : destinoGeral,
+    horarioChegada   : multiplosPassageiros ? '' : horChegadaGeral,
+    motorista        : document.getElementById('motorista').value.trim(),
+    observacoes      : document.getElementById('observacoes').value.trim(),
+    operador         : 'portaria'
   };
 
   try {
@@ -1287,52 +1319,92 @@ function configurarMotivo() {
 }
 
 // ============================================================
-// PASSAGEIROS — adicionar/remover tags
+// PARADAS — passageiro + origem + horário saída + destino + chegada
 // ============================================================
-let passageirosLista = [];
+let paradasLista = []; // [{nome, origem, horSaida, destino, horChegada}]
 
 function adicionarPassageiro() {
   const input = document.getElementById('inputPassageiro');
   const nome  = input.value.trim();
-  if (!nome) return;
+  if (!nome) { input.focus(); return; }
 
-  // Evita duplicata
-  if (passageirosLista.includes(nome)) {
-    toast('Passageiro já adicionado.', 'warn');
-    input.value = '';
-    return;
-  }
-
-  passageirosLista.push(nome);
+  paradasLista.push({ nome, origem: '', horSaida: '', destino: '', horChegada: '' });
   input.value = '';
-  renderPassageiros();
+  renderParadas();
+  sincronizarCamposGerais();
   input.focus();
 }
 
-function removerPassageiro(nome) {
-  passageirosLista = passageirosLista.filter(p => p !== nome);
-  renderPassageiros();
+function removerParada(idx) {
+  paradasLista.splice(idx, 1);
+  renderParadas();
+  sincronizarCamposGerais();
 }
 
-function renderPassageiros() {
-  const lista   = document.getElementById('listaPassageiros');
-  const hidden  = document.getElementById('passageiros');
+function renderParadas() {
+  const lista  = document.getElementById('listaPassageiros');
+  const hidden = document.getElementById('passageiros');
 
-  lista.innerHTML = passageirosLista.map(nome => `
-    <span class="passageiro-tag">
-      ${nome}
-      <button type="button" onclick="removerPassageiro('${nome.replace(/'/g, "\\'")}')">×</button>
-    </span>
+  if (!paradasLista.length) {
+    lista.innerHTML = '';
+    hidden.value = '';
+    return;
+  }
+
+  lista.innerHTML = paradasLista.map((p, i) => `
+    <div class="parada-card">
+      <div class="parada-header">
+        <span class="parada-num">${i + 1}</span>
+        <span class="parada-nome">${p.nome}</span>
+        <button type="button" class="btn-remover-parada" onclick="removerParada(${i})">×</button>
+      </div>
+      ${paradasLista.length > 1 ? `
+      <div class="parada-grid">
+        <div>
+          <label>Origem</label>
+          <input type="text" placeholder="Endereço de embarque"
+            value="${p.origem}" oninput="paradasLista[${i}].origem=this.value">
+        </div>
+        <div>
+          <label>Saída</label>
+          <input type="time" value="${p.horSaida}"
+            oninput="paradasLista[${i}].horSaida=this.value">
+        </div>
+        <div>
+          <label>Destino</label>
+          <input type="text" placeholder="Endereço de desembarque"
+            value="${p.destino}" oninput="paradasLista[${i}].destino=this.value">
+        </div>
+        <div>
+          <label>Chegada</label>
+          <input type="time" value="${p.horChegada}"
+            oninput="paradasLista[${i}].horChegada=this.value">
+        </div>
+      </div>` : ''}
+    </div>
   `).join('');
 
-  hidden.value = passageirosLista.join(', ');
+  // Atualiza hidden com JSON das paradas
+  hidden.value = JSON.stringify(paradasLista);
+}
+
+function sincronizarCamposGerais() {
+  const camposGerais = document.getElementById('camposOrigemDestino');
+  const multiplos    = paradasLista.length > 1;
+
+  // Com múltiplos passageiros: esconde campos gerais e torna opcionais
+  camposGerais.style.display = multiplos ? 'none' : 'grid';
+  document.getElementById('origem').required      = !multiplos;
+  document.getElementById('horarioSaida').required = !multiplos;
+  document.getElementById('destino').required     = !multiplos;
 }
 
 function limparPassageiros() {
-  passageirosLista = [];
+  paradasLista = [];
   document.getElementById('listaPassageiros').innerHTML = '';
   document.getElementById('passageiros').value = '';
   document.getElementById('inputPassageiro').value = '';
+  sincronizarCamposGerais();
 }
 
 function configurarUnidade() {
