@@ -335,6 +335,13 @@ tr:hover td { background: var(--bg-surface); }
   <div class="header-meta">
     <span id="mesHeader"></span>
     <span>Táxi <strong id="hTaxi">0</strong> · Uber <strong id="hUber">0</strong></span>
+    <span id="statusFila" style="font-size:11px;opacity:.8"></span>
+    <button onclick="dispararFila()" id="btnFila"
+      style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+             color:#fff;padding:4px 12px;border-radius:6px;font-size:12px;
+             cursor:pointer;font-weight:600">
+      📨 Enviar notificações
+    </button>
     <span title="Status da conexão com o Sheets">
       <span class="ping-dot" id="pingDot"></span>
     </span>
@@ -713,6 +720,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   carregarMes(mesAtivo);
   testarConexao();
+  atualizarStatusFila();
+  setInterval(atualizarStatusFila, 60000); // atualiza status da fila a cada 1 min
 });
 
 // ============================================================
@@ -1417,6 +1426,44 @@ function limparForm() {
   document.getElementById('horarioSaida').value = '';
   document.getElementById('horarioChegada').value = '';
   setDataHoraAtual();
+}
+
+// ============================================================
+// FILA DE NOTIFICAÇÕES
+// ============================================================
+async function dispararFila() {
+  const btn = document.getElementById('btnFila');
+  btn.disabled = true;
+  btn.textContent = '⏳ Enviando...';
+
+  try {
+    const txt = await chamarScript({ acao: 'dispararFila' });
+    if (txt.startsWith('OK')) {
+      const qtd = txt.split('|')[1] || '0';
+      toast(qtd.includes('0') ? 'Nenhuma notificação pendente.' : qtd + ' disparadas com sucesso.', 
+            qtd.includes('0') ? 'info' : 'ok');
+      await atualizarStatusFila();
+    } else {
+      toast('Erro: ' + txt, 'err');
+    }
+  } catch(err) {
+    toast('Erro de conexão: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📨 Enviar notificações';
+  }
+}
+
+async function atualizarStatusFila() {
+  try {
+    const txt = await chamarScript({ acao: 'statusFila' });
+    const el  = document.getElementById('statusFila');
+    if (txt.startsWith('OK|')) {
+      const info = txt.split('|')[1];
+      const qtd  = parseInt(info) || 0;
+      el.textContent = qtd > 0 ? '📬 ' + qtd + ' pendente(s)' : '';
+    }
+  } catch(_) {}
 }
 
 function toast(msg, tipo = 'info') {
