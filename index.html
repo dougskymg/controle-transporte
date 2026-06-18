@@ -569,6 +569,7 @@ tr:hover td { background: var(--bg-surface); }
       </div>
       <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
         <button class="btn btn-primary" onclick="carregarParaFatura()">Carregar corridas</button>
+        <button class="btn btn-secondary" onclick="abrirXLSX()">📊 Baixar XLSX do mês</button>
       </div>
     </div>
 
@@ -1333,6 +1334,24 @@ async function salvarValoresFatura() {
   }
 }
 
+async function abrirXLSX() {
+  const mes = document.getElementById('mesFatura').value || mesAtivo;
+  const nf  = document.getElementById('numNF').value.trim();
+
+  toast('Gerando XLSX no Drive...', 'info');
+  try {
+    const txt = await chamarScript({ acao: 'gerarXLSX', mes, nf });
+    if (txt.startsWith('OK|')) {
+      const link = txt.split('|')[1];
+      window.open(link, '_blank');
+    } else {
+      toast('Erro: ' + txt, 'err');
+    }
+  } catch(err) {
+    toast('Erro de conexão: ' + err.message, 'err');
+  }
+}
+
 async function fecharFaturaFinal() {
   const mes   = document.getElementById('mesFatura').value;
   const nf    = document.getElementById('numNF').value.trim();
@@ -1357,7 +1376,17 @@ async function fecharFaturaFinal() {
       operador    : 'facilities'
     });
     if (txt.startsWith('OK')) {
-      toast('Fatura fechada! E-mail de rateio enviado.', 'ok');
+      const partes = txt.split('|');
+      const link   = partes[1] || '';
+      toast('Fatura fechada! E-mail enviado com XLSX anexado.', 'ok');
+      if (link) {
+        // Exibe link do Drive no painel
+        const cont = document.getElementById('faturaContainer');
+        const div  = document.createElement('div');
+        div.style.cssText = 'margin-top:16px;padding:14px 18px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:13px';
+        div.innerHTML = '✅ Rateio fechado — <a href="' + link + '" target="_blank" style="color:#CC0F10;font-weight:600">📊 Abrir planilha no Drive</a>';
+        cont.appendChild(div);
+      }
     } else {
       toast('Erro: ' + txt, 'err');
     }
